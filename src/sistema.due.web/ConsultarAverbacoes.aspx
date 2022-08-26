@@ -89,7 +89,7 @@
                                     ShowHeaderWhenEmpty="True"
                                     DataKeyNames="ChaveNfe">
                                     <Columns>
-                                        <asp:BoundField DataField="ChaveNfe" HeaderText="ChaveNfe" HtmlEncodeFormatString="false" />
+                                        <asp:BoundField DataField="ChaveNfe" HeaderText="ChaveNfe"  />
                                         <%--<asp:BoundField DataField="UnidadeTributavel" HeaderText="Unidade Tributavel" />
                                         <asp:BoundField DataField="QtdeTributavel" HeaderText="Qtde Tributavel" />--%>
                                         <asp:BoundField DataField="ItemNfe" HeaderText="Item Nfe" />

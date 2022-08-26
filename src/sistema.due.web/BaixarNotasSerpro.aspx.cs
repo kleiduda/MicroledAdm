@@ -3,19 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.UI.WebControls;
 using Cargill.DUE.Web.Models;
 using Cargill.DUE.Web.Services;
 using System.Web.UI;
 using Cargill.DUE.Web.Models.SERPRO;
-using NUnit.Framework;
-using System.Web.Services.Description;
-using Ionic.Zip;
-using System.IO.Compression;
 using System.Xml;
-using System.Security.AccessControl;
-using System.Text;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Sistema.DUE.Web
 {
@@ -81,6 +75,7 @@ namespace Sistema.DUE.Web
             }
 
             CreateZipFileContent(consultaAverbacoes);
+            DeleteFilesXml();
             
 
 
@@ -89,19 +84,58 @@ namespace Sistema.DUE.Web
 
         }
 
+        private void DeleteFilesXml()
+        {
+            string path = Server.MapPath("Uploads\\");
+            DirectoryInfo di = new DirectoryInfo(path);
+            FileInfo[] fi = di.GetFiles("*.xml");
+            foreach (FileInfo filetemp in fi)
+            {
+                filetemp.Delete();
+            }
+        }
+
         public void CreateZipFileContent(List<string> consultaAverbacoes)
         {
-
             string path = Server.MapPath("Uploads\\");
-            using (var stream = File.OpenWrite(path))
+            string fileName = "consulta.zip";
+            foreach (var file in consultaAverbacoes)
             {
-                using (ZipArchive zip = new ZipArchive(stream, ZipArchiveMode.Create))
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(file);
+
+                XmlNode nodeName = xml.DocumentElement;
+
+                File.WriteAllText(path + nodeName.SelectSingleNode("//nfeProc/protNFe/infProt/chNFe").InnerXml + ".xml", xml.InnerXml);
+            }
+            
+            try
+            {
+                Response.AddHeader("Content-Disposition", "attachment; filename=" + "consulta" + ".zip");
+                Response.ContentType = "application/zip";
+                using (var zipStream = new ZipOutputStream(Response.OutputStream))
                 {
-                    foreach (string file in consultaAverbacoes)
+                    // note: this does not recurse directories! 
+                    String[] filenames = System.IO.Directory.GetFiles(path, "*.xml");
+                    foreach (String filename in filenames)
                     {
-                        zip.CreateEntryFromFile(file, Path.GetFileName(path), CompressionLevel.Optimal);
+                        byte[] fileBytes = System.IO.File.ReadAllBytes(filename);
+                        var fileEntry = new ZipEntry(Path.GetFileName(filename))
+                        {
+                            Size = fileBytes.Length
+                        };
+
+                        zipStream.PutNextEntry(fileEntry);
+                        zipStream.Write(fileBytes, 0, fileBytes.Length);
                     }
+
+                    zipStream.Flush();
+                    zipStream.Close();
                 }
+            }
+            catch (System.Exception ex1)
+            {
+                System.Console.Error.WriteLine("exception: " + ex1);
             }
         }
 
