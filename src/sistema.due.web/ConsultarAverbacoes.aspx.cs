@@ -170,7 +170,7 @@ namespace Sistema.DUE.Web
             List<EventosNfe> eventosNfe = new List<EventosNfe>();
             List<ProdutosNfe> produtosNfe = new List<ProdutosNfe>();
 
-            if(consulta.procEventoNFe != null)
+            if (consulta.procEventoNFe != null)
                 foreach (var item in consulta.procEventoNFe.Where(x => x.evento.infEvento.detEvento.itensAverbados != null))
                 {
                     eventosNfe.Add(new EventosNfe()
@@ -271,13 +271,22 @@ namespace Sistema.DUE.Web
             StringWriter strwritter = new StringWriter();
             HtmlTextWriter htmltextwrtter = new HtmlTextWriter(strwritter);
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
-            Response.ContentType = "application/vnd.ms-excel";
+            Response.ContentType = "application/excel";
             Response.AddHeader("Content-Disposition", "attachment;filename=" + FileName);
             gvNotasFiscais.GridLines = GridLines.Both;
-            
+
             gvNotasFiscais.HeaderStyle.Font.Bold = true;
-            
+            foreach (GridViewRow row in gvNotasFiscais.Rows)
+            {
+                foreach ( TableCell cell in row.Cells )
+                {
+                    cell.CssClass = "textmode";
+                }
+            }
+
             gvNotasFiscais.RenderControl(htmltextwrtter);
+            string style = @"<style> .textmode { mso-number-format:\@; } </style>";
+            Response.Write(style);
             Response.Write(strwritter.ToString());
             Response.End();
         }
