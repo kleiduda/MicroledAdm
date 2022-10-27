@@ -21,7 +21,7 @@ namespace Sistema.DUE.Web.DAO
             var consultas = new TotalDeConsultasRealizadas();
             using (SqlConnection con = new SqlConnection(Banco.StringConexao()))
             {
-                consultas = con.Query<TotalDeConsultasRealizadas>(@"SELECT [total] as ConsultasRealizadas  FROM [adm_due].[dbo].[Total_consulta_NFe]").FirstOrDefault();
+                //consultas = con.Query<TotalDeConsultasRealizadas>(@"SELECT [total] as ConsultasRealizadas  FROM [adm_due].[dbo].[Total_consulta_NFe]").FirstOrDefault();
             }
 
 

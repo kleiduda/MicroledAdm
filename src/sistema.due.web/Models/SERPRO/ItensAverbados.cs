@@ -1,6 +1,4 @@
-﻿using Cargill.DUE.Web.Models.SERPRO;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Cargill.DUE.Web.Models.SERPRO
 {
@@ -9,12 +7,12 @@ namespace Cargill.DUE.Web.Models.SERPRO
     {
         public string UnidadeTributavel { get; set; }
         public float? QtdeTributavel { get; set; }
-        public DateTime? DataDoEmbarque { get; set; }
-        public DateTime? DataDaAverbacao { get; set; }
+        public string DataDoEmbarque { get; set; }
+        public string DataDaAverbacao { get; set; }
         public int? ItemNfe { get; set; }
-        public float? QtdeAverbada { get; set; }
+        public string QtdeAverbada { get; set; }
         public string Due { get; set; }
-        public int? ItemDue { get; set; }
+        public string ItemDue { get; set; }
     }
 
 }

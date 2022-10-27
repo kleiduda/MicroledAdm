@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Cargill.DUE.Web.Models
 {
@@ -340,7 +337,7 @@ namespace Cargill.DUE.Web.Models
     public class Proceventonfe
     {
         public Evento evento { get; set; }
-        //public Retevento retEvento { get; set; }
+        public Retevento retEvento { get; set; }
     }
 
     public class Evento
@@ -350,6 +347,7 @@ namespace Cargill.DUE.Web.Models
 
     public class Infevento
     {
+
         //public int cOrgao { get; set; }
         //public DateTime dhEvento { get; set; }
         public Detevento detEvento { get; set; }
@@ -375,11 +373,11 @@ namespace Cargill.DUE.Web.Models
     {
         public int nItem { get; set; }
         public string nDue { get; set; } // campo DUE
-        public DateTime dhEmbarque { get; set; }
-        //public int motAlteracao { get; set; }
-        public DateTime dhAverbacao { get; set; }
-        public int nItemDue { get; set; } // campo ItemDue
-        public float qItem { get; set; }
+        public string dhEmbarque { get; set; }
+        public int motAlteracao { get; set; }
+        public string dhAverbacao { get; set; }
+        public string nItemDue { get; set; } // campo ItemDue
+        public string qItem { get; set; }
     }
 
     public class Retevento
