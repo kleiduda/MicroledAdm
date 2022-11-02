@@ -67,15 +67,19 @@ namespace Sistema.DUE.Web
             {
                 if (consultaAverbacoesXml[i].Eventos.Count() > 0)
                 {
+                    var list = new List<EventosNfe>();
+
+
                     for (int j = 0; j < consultaAverbacoesXml[i].Eventos.Count(); j++)
                     {
+                        string numeroItem = string.Empty;
+                        numeroItem = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemNfe;
+                        //
                         consultaSerproView.Add(new ConsultaSerproView()
                         {
                             ChaveNfe = consultaAverbacoesXml[i].ChaveNfe,
-                            UnidadeTributavel = consultaAverbacoesXml[i].Produtos.Where(x => x.NItem == 
-                            consultaAverbacoesXml[i].Eventos?[j].Evento?.InfoEvento?.DetalheEvento?.ItensAverbados?.ItemDue).Select(x => x.UnidadeTributavel).DefaultIfEmpty("Unknown").FirstOrDefault(),
-                            QtdeTributavel = consultaAverbacoesXml[i].Produtos.Where(x => x.NItem == 
-                            consultaAverbacoesXml[i].Eventos[j]?.Evento?.InfoEvento?.DetalheEvento?.ItensAverbados?.ItemDue).Select(x => x.QtdeTributavel).DefaultIfEmpty(0).FirstOrDefault(),
+                            UnidadeTributavel = consultaAverbacoesXml[i].Produtos.Where(x => x.NItem == numeroItem).FirstOrDefault().UnidadeTributavel,
+                            QtdeTributavel = consultaAverbacoesXml[i].Produtos.Where(x => x.NItem == numeroItem).FirstOrDefault().QtdeTributavel,
                             ItemNfe = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemNfe,
                             DataDoEmbarque = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDoEmbarque,
                             DataDaAverbacao = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDaAverbacao,
@@ -89,11 +93,27 @@ namespace Sistema.DUE.Web
                 }
                 else
                 {
-                    consultaSerproView.Add(new ConsultaSerproView()
+                    if (consultaAverbacoesXml[i].Produtos.Count() > 0)
                     {
-                        ChaveNfe = consultaAverbacoesXml[i].ChaveNfe,
-                        Descricao = "Erro ao tentar montar a nota em tela"
-                    });
+                        for (int p = 0; p < consultaAverbacoesXml[i].Produtos.Count(); p++)
+                        {
+                            consultaSerproView.Add(new ConsultaSerproView()
+                            {
+                                ChaveNfe = consultaAverbacoesXml[i].ChaveNfe,
+                                UnidadeTributavel = consultaAverbacoesXml[i].Produtos?[p].UnidadeTributavel,
+                                QtdeTributavel = consultaAverbacoesXml[i].Produtos?[p].QtdeTributavel,
+                                Descricao = "Nota sem averbação"
+                            });
+                        }
+                    }
+                    else
+                    {
+                        consultaSerproView.Add(new ConsultaSerproView()
+                        {
+                            ChaveNfe = consultaAverbacoesXml[i].ChaveNfe,
+                            Descricao = "Erro ao tentar montar a nota em tela"
+                        });
+                    }
                 }
 
                 //if (consultaAverbacoes[i].Produtos != null)
@@ -118,7 +138,7 @@ namespace Sistema.DUE.Web
                 //        Descricao = "Erro ao tentar montar a nota em tela"
                 //    });
                 //}
-                
+
 
             }
 
@@ -321,7 +341,7 @@ namespace Sistema.DUE.Web
                                         {
                                             //UnidadeTributavel = item.,
                                             //QtdeTributavel = result.nfeProc.NFe.infNFe.det.FirstOrDefault().prod.qTrib,
-                                            ItemNfe = Convert.ToInt32(item.evento.infEvento.detEvento.itensAverbados?[i].nItem),
+                                            ItemNfe = item.evento.infEvento.detEvento.itensAverbados?[i].nItem,
                                             DataDoEmbarque = item.evento.infEvento.detEvento.itensAverbados?[i].dhEmbarque,
                                             DataDaAverbacao = item.evento.infEvento.detEvento.itensAverbados?[i].dhAverbacao,
                                             QtdeAverbada = item.evento.infEvento.detEvento.itensAverbados?[i].qItem,
@@ -419,7 +439,7 @@ namespace Sistema.DUE.Web
             gvNotasFiscais.HeaderStyle.Font.Bold = true;
             foreach (GridViewRow row in gvNotasFiscais.Rows)
             {
-                foreach ( TableCell cell in row.Cells )
+                foreach (TableCell cell in row.Cells)
                 {
                     cell.CssClass = "textmode";
                 }

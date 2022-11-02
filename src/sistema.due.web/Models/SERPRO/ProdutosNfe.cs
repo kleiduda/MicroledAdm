@@ -10,6 +10,6 @@ namespace Cargill.DUE.Web.Models.SERPRO
     {
         public string NItem { get; set; }
         public string UnidadeTributavel { get; set; }
-        public float QtdeTributavel { get; set; }
+        public float? QtdeTributavel { get; set; }
     }
 }

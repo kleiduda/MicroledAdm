@@ -371,7 +371,7 @@ namespace Cargill.DUE.Web.Models
 
     public class Itensaverbados
     {
-        public int nItem { get; set; }
+        public string nItem { get; set; }
         public string nDue { get; set; } // campo DUE
         public string dhEmbarque { get; set; }
         public int motAlteracao { get; set; }

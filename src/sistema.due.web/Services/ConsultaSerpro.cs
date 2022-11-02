@@ -104,7 +104,6 @@ namespace Cargill.DUE.Web.Services
                 {
                     _consultaSerproDao.GravarConsultaRealizad();
                     xmlResult = tokenResponse.Content.ReadAsStringAsync().Result;
-                    //consultaAverbacoes = tokenResponse.Content.ReadAsAsync<ResultadoConsultaXML>(new[] { new XmlMediaTypeFormatter() }).Result;
                 }
                 else
                 {
