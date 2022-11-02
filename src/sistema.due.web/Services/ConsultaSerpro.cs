@@ -2,6 +2,8 @@
 using Cargill.DUE.Web.Models;
 using Cargill.DUE.Web.Models.SERPRO.xml;
 using Cargill.DUE.Web.Services.Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sistema.DUE.Web.DAO;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -49,8 +52,24 @@ namespace Cargill.DUE.Web.Services
                 HttpClient client = Method_Headers(accessToken, getNfeEndpoint);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, Uri.EscapeUriString(client.BaseAddress.ToString()));
                 HttpResponseMessage tokenResponse = await client.GetAsync(Uri.EscapeUriString(client.BaseAddress.ToString()), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                string responseBody = await tokenResponse.Content.ReadAsStringAsync();
+                string newJson = responseBody.Replace("\"itensAverbados\": {", "\"itensAverbados\": {[");
+
+
                 if (tokenResponse.IsSuccessStatusCode)
                 {
+                    object jsonObj = JsonConvert.DeserializeObject<object>(responseBody);
+                    //consultaAverbacoes = JsonConvert.DeserializeObject<ConsultaAverbacoesNFE>(responseBody);
+                    JObject obj = JObject.Parse(responseBody);
+                    //
+                    //
+
+                    JArray jarr = (JArray)obj["procEventoNFe"];
+
+                    foreach (var item in jarr.Children())
+                    {
+                        var itemProperty = item.Children<JProperty>().Children().Children().Children().Children().Children();
+                    }
                     _consultaSerproDao.GravarConsultaRealizad();
                     consultaAverbacoes = tokenResponse.Content.ReadAsAsync<ConsultaAverbacoesNFE>(new[] { new JsonMediaTypeFormatter() }).Result;
                 }
@@ -69,7 +88,7 @@ namespace Cargill.DUE.Web.Services
             {
 
             }
-            return consultaAverbacoes;   
+            return consultaAverbacoes;
         }
         public async Task<string> GetXml(string accessToken, string chave)
         {
