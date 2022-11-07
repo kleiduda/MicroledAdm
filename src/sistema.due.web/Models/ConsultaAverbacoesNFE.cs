@@ -273,7 +273,7 @@ namespace Cargill.DUE.Web.Models
         //public int qCom { get; set; }
         //public string cEANTrib { get; set; }
         //public float vUnTrib { get; set; }
-        public float qTrib { get; set; }
+        public string qTrib { get; set; }
         //public float vProd { get; set; }
         //public string xProd { get; set; }
         //public float vUnCom { get; set; }

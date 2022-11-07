@@ -1,5 +1,6 @@
 ﻿
 // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
+using System.Linq;
 /// <remarks/>
 [System.SerializableAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -81,7 +82,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLog
 
     private nfeConsultaNFeLogResultRetConsNFeLogNFeLog nFeLogField;
 
-    private decimal versaoField;
+    private string versaoField;
 
     /// <remarks/>
     public nfeConsultaNFeLogResultRetConsNFeLogNFeLog NFeLog
@@ -98,7 +99,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLog
 
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public decimal versao
+    public string versao
     {
         get
         {
@@ -122,7 +123,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLog
 
     private nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFe[] procEventoNFeField;
 
-    private decimal versaoField;
+    private string versaoField;
 
     /// <remarks/>
     public nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProc nfeProc
@@ -153,7 +154,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLog
 
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public decimal versao
+    public string versao
     {
         get
         {
@@ -177,7 +178,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProc
 
     private nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFe nFeField;
 
-    private decimal versaoField;
+    private string versaoField;
 
     /// <remarks/>
     public nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcProtNFe protNFe
@@ -206,7 +207,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProc
     }
 
     /// <remarks/>
-    public decimal versao
+    public string versao
     {
         get
         {
@@ -249,7 +250,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcProtNFe
 public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcProtNFeInfProt
 {
 
-    private ulong nProtField;
+    private string nProtField;
 
     private string digValField;
 
@@ -262,7 +263,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcProtNFeInf
     private string cStatField;
 
     /// <remarks/>
-    public ulong nProt
+    public string nProt
     {
         get
         {
@@ -637,16 +638,16 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeI
 public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeInfRespTec
 {
 
-    private ulong foneField;
+    private string foneField;
 
-    private ulong cNPJField;
+    private string cNPJField;
 
     private string xContatoField;
 
     private string emailField;
 
     /// <remarks/>
-    public ulong fone
+    public string fone
     {
         get
         {
@@ -659,7 +660,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeI
     }
 
     /// <remarks/>
-    public ulong CNPJ
+    public string CNPJ
     {
         get
         {
@@ -760,25 +761,25 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
 
     private string xPedField;
 
-    private ulong cEANField;
+    private string cEANField;
 
-    private ulong cProdField;
+    private string cProdField;
 
     private string indEscalaField;
 
-    private decimal qComField;
+    private string qComField;
 
-    private ulong cEANTribField;
+    private string cEANTribField;
 
-    private decimal vUnTribField;
+    private string vUnTribField;
 
-    private float qTribField;
+    private string qTribField;
 
-    private decimal vProdField;
+    private string vProdField;
 
     private string xProdField;
 
-    private decimal vUnComField;
+    private string vUnComField;
 
     private string nItemPedField;
 
@@ -790,7 +791,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
 
     private string uComField;
 
-    private ushort cFOPField;
+    private string cFOPField;
 
     private string cESTField;
 
@@ -808,7 +809,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public ulong cEAN
+    public string cEAN
     {
         get
         {
@@ -821,7 +822,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public ulong cProd
+    public string cProd
     {
         get
         {
@@ -847,7 +848,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public decimal qCom
+    public string qCom
     {
         get
         {
@@ -860,7 +861,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public ulong cEANTrib
+    public string cEANTrib
     {
         get
         {
@@ -873,7 +874,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public decimal vUnTrib
+    public string vUnTrib
     {
         get
         {
@@ -886,7 +887,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public float qTrib
+    public string qTrib
     {
         get
         {
@@ -899,7 +900,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public decimal vProd
+    public string vProd
     {
         get
         {
@@ -925,7 +926,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public decimal vUnCom
+    public string vUnCom
     {
         get
         {
@@ -1003,7 +1004,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public ushort CFOP
+    public string CFOP
     {
         get
         {
@@ -1133,7 +1134,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
 
     private string cSTField;
 
-    private decimal vICMSDesonField;
+    private string vICMSDesonField;
 
     /// <remarks/>
     public string motDesICMS
@@ -1175,7 +1176,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public decimal vICMSDeson
+    public string vICMSDeson
     {
         get
         {
@@ -1371,52 +1372,52 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
 public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeTotalICMSTot
 {
 
-    private decimal vICMSUFDestField;
+    private string vICMSUFDestField;
 
-    private decimal vICMSUFRemetField;
+    private string vICMSUFRemetField;
 
-    private decimal vCOFINSField;
+    private string vCOFINSField;
 
-    private decimal vBCSTField;
+    private string vBCSTField;
 
-    private decimal vICMSDesonField;
+    private string vICMSDesonField;
 
-    private decimal vFCPUFDestField;
+    private string vFCPUFDestField;
 
-    private decimal vProdField;
+    private string vProdField;
 
-    private decimal vSegField;
+    private string vSegField;
 
-    private decimal vFCPField;
+    private string vFCPField;
 
-    private decimal vFCPSTField;
+    private string vFCPSTField;
 
-    private decimal vNFField;
+    private string vNFField;
 
-    private decimal vPISField;
+    private string vPISField;
 
-    private decimal vIPIDevolField;
+    private string vIPIDevolField;
 
-    private decimal vBCField;
+    private string vBCField;
 
-    private decimal vSTField;
+    private string vSTField;
 
-    private decimal vICMSField;
+    private string vICMSField;
 
-    private decimal vIIField;
+    private string vIIField;
 
-    private decimal vFCPSTRetField;
+    private string vFCPSTRetField;
 
-    private decimal vDescField;
+    private string vDescField;
 
-    private decimal vOutroField;
+    private string vOutroField;
 
-    private decimal vIPIField;
+    private string vIPIField;
 
-    private decimal vFreteField;
+    private string vFreteField;
 
     /// <remarks/>
-    public decimal vICMSUFDest
+    public string vICMSUFDest
     {
         get
         {
@@ -1429,7 +1430,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vICMSUFRemet
+    public string vICMSUFRemet
     {
         get
         {
@@ -1442,7 +1443,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vCOFINS
+    public string vCOFINS
     {
         get
         {
@@ -1455,7 +1456,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vBCST
+    public string vBCST
     {
         get
         {
@@ -1468,7 +1469,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vICMSDeson
+    public string vICMSDeson
     {
         get
         {
@@ -1481,7 +1482,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vFCPUFDest
+    public string vFCPUFDest
     {
         get
         {
@@ -1494,7 +1495,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vProd
+    public string vProd
     {
         get
         {
@@ -1507,7 +1508,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vSeg
+    public string vSeg
     {
         get
         {
@@ -1520,7 +1521,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vFCP
+    public string vFCP
     {
         get
         {
@@ -1533,7 +1534,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vFCPST
+    public string vFCPST
     {
         get
         {
@@ -1546,7 +1547,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vNF
+    public string vNF
     {
         get
         {
@@ -1559,7 +1560,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vPIS
+    public string vPIS
     {
         get
         {
@@ -1572,7 +1573,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vIPIDevol
+    public string vIPIDevol
     {
         get
         {
@@ -1585,7 +1586,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vBC
+    public string vBC
     {
         get
         {
@@ -1598,7 +1599,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vST
+    public string vST
     {
         get
         {
@@ -1611,7 +1612,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vICMS
+    public string vICMS
     {
         get
         {
@@ -1624,7 +1625,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vII
+    public string vII
     {
         get
         {
@@ -1637,7 +1638,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vFCPSTRet
+    public string vFCPSTRet
     {
         get
         {
@@ -1650,7 +1651,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vDesc
+    public string vDesc
     {
         get
         {
@@ -1663,7 +1664,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vOutro
+    public string vOutro
     {
         get
         {
@@ -1676,7 +1677,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vIPI
+    public string vIPI
     {
         get
         {
@@ -1689,7 +1690,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal vFrete
+    public string vFrete
     {
         get
         {
@@ -1732,16 +1733,16 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeC
 public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeCobrFat
 {
 
-    private decimal vOrigField;
+    private string vOrigField;
 
     private string nFatField;
 
-    private decimal vDescField;
+    private string vDescField;
 
-    private decimal vLiqField;
+    private string vLiqField;
 
     /// <remarks/>
-    public decimal vOrig
+    public string vOrig
     {
         get
         {
@@ -1767,7 +1768,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeC
     }
 
     /// <remarks/>
-    public decimal vDesc
+    public string vDesc
     {
         get
         {
@@ -1780,7 +1781,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeC
     }
 
     /// <remarks/>
-    public decimal vLiq
+    public string vLiq
     {
         get
         {
@@ -1800,12 +1801,12 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeC
 public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFePag
 {
 
-    private decimal vTrocoField;
+    private string vTrocoField;
 
     private nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFePagDetPag detPagField;
 
     /// <remarks/>
-    public decimal vTroco
+    public string vTroco
     {
         get
         {
@@ -1838,14 +1839,14 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeP
 public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFePagDetPag
 {
 
-    private decimal vPagField;
+    private string vPagField;
 
     private string tPagField;
 
     private string indPagField;
 
     /// <remarks/>
-    public decimal vPag
+    public string vPag
     {
         get
         {
@@ -2209,7 +2210,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeE
 
     private string xFantField;
 
-    private ulong cNPJField;
+    private string cNPJField;
 
     private nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeEmitEnderEmit enderEmitField;
 
@@ -2281,7 +2282,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeE
     }
 
     /// <remarks/>
-    public ulong CNPJ
+    public string CNPJ
     {
         get
         {
@@ -2329,19 +2330,19 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeE
 
     private string xCplField;
 
-    private ulong foneField;
+    private string foneField;
 
     private string ufField;
 
     private string xPaisField;
 
-    private ushort cPaisField;
+    private string cPaisField;
 
     private string xLgrField;
 
     private string xMunField;
 
-    private ushort nroField;
+    private string nroField;
 
     private string cMunField;
 
@@ -2363,7 +2364,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeE
     }
 
     /// <remarks/>
-    public ulong fone
+    public string fone
     {
         get
         {
@@ -2402,7 +2403,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeE
     }
 
     /// <remarks/>
-    public ushort cPais
+    public string cPais
     {
         get
         {
@@ -2441,7 +2442,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeE
     }
 
     /// <remarks/>
-    public ushort nro
+    public string nro
     {
         get
         {
@@ -2504,7 +2505,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
 
     private string iSUFField;
 
-    private ulong cNPJField;
+    private string cNPJField;
 
     private nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeDestEnderDest enderDestField;
 
@@ -2541,7 +2542,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public ulong CNPJ
+    public string CNPJ
     {
         get
         {
@@ -2613,13 +2614,13 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
 public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeDestEnderDest
 {
 
-    private ulong foneField;
+    private string foneField;
 
     private string ufField;
 
     private string xPaisField;
 
-    private ushort cPaisField;
+    private string cPaisField;
 
     private string xLgrField;
 
@@ -2634,7 +2635,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     private string cEPField;
 
     /// <remarks/>
-    public ulong fone
+    public string fone
     {
         get
         {
@@ -2673,7 +2674,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeD
     }
 
     /// <remarks/>
-    public ushort cPais
+    public string cPais
     {
         get
         {
@@ -2824,16 +2825,16 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
 public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeTranspVol
 {
 
-    private decimal pesoLField;
+    private string pesoLField;
 
     private string espField;
 
-    private ushort qVolField;
+    private string qVolField;
 
-    private decimal pesoBField;
+    private string pesoBField;
 
     /// <remarks/>
-    public decimal pesoL
+    public string pesoL
     {
         get
         {
@@ -2859,7 +2860,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public ushort qVol
+    public string qVol
     {
         get
         {
@@ -2872,7 +2873,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public decimal pesoB
+    public string pesoB
     {
         get
         {
@@ -2900,7 +2901,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
 
     private string xMunField;
 
-    private ulong cNPJField;
+    private string cNPJField;
 
     private string ieField;
 
@@ -2957,7 +2958,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogNfeProcNFeInfNFeT
     }
 
     /// <remarks/>
-    public ulong CNPJ
+    public string CNPJ
     {
         get
         {
@@ -3061,7 +3062,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeEven
 
     private nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeEventoInfEventoDetEvento detEventoField;
 
-    private ulong cNPJField;
+    private string cNPJField;
 
     private bool cNPJFieldSpecified;
 
@@ -3073,7 +3074,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeEven
 
     private bool tpAmbFieldSpecified;
 
-    private decimal verEventoField;
+    private string verEventoField;
 
     private bool verEventoFieldSpecified;
 
@@ -3146,7 +3147,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeEven
     }
 
     /// <remarks/>
-    public ulong CNPJ
+    public string CNPJ
     {
         get
         {
@@ -3227,7 +3228,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeEven
     }
 
     /// <remarks/>
-    public decimal verEvento
+    public string verEvento
     {
         get
         {
@@ -3276,7 +3277,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeEven
 
     private nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeEventoInfEventoDetEventoItensAverbados[] itensAverbadosField;
 
-    private decimal verAplicField;
+    private string verAplicField;
 
     private bool verAplicFieldSpecified;
 
@@ -3286,7 +3287,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeEven
 
     private bool tpAutorFieldSpecified;
 
-    private decimal versaoField;
+    private string versaoField;
 
     private bool versaoFieldSpecified;
 
@@ -3305,7 +3306,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeEven
     }
 
     /// <remarks/>
-    public decimal verAplic
+    public string verAplic
     {
         get
         {
@@ -3372,7 +3373,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeEven
     }
 
     /// <remarks/>
-    public decimal versao
+    public string versao
     {
         get
         {
@@ -3544,7 +3545,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeRetE
 
     private string cOrgaoField;
 
-    private ulong nProtField;
+    private string nProtField;
 
     private string nSeqEventoField;
 
@@ -3564,7 +3565,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeRetE
 
     private bool tpAmbFieldSpecified;
 
-    private ulong cNPJDestField;
+    private string cNPJDestField;
 
     private bool cNPJDestFieldSpecified;
 
@@ -3588,7 +3589,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeRetE
     }
 
     /// <remarks/>
-    public ulong nProt
+    public string nProt
     {
         get
         {
@@ -3721,7 +3722,7 @@ public partial class nfeConsultaNFeLogResultRetConsNFeLogNFeLogProcEventoNFeRetE
     }
 
     /// <remarks/>
-    public ulong CNPJDest
+    public string CNPJDest
     {
         get
         {

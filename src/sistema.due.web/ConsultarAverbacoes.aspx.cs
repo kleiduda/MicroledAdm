@@ -11,6 +11,7 @@ using System.Web.UI;
 using Cargill.DUE.Web.Models.SERPRO;
 using System.Net;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace Sistema.DUE.Web
 {
@@ -235,6 +236,7 @@ namespace Sistema.DUE.Web
                         var serializer = new XmlSerializer(typeof(Envelope));
                         try
                         {
+                            //var teste = (Object)serializer.Deserialize(sr);
                             envelope = (Envelope)serializer.Deserialize(sr);
                         }
                         catch (Exception ex)
@@ -245,9 +247,20 @@ namespace Sistema.DUE.Web
 
                             }
                         }
-
-
                     }
+                    // Create an instance of a serializer
+                    //var serializer = new XmlSerializer(typeof(Envelope));
+                    //XmlDocument doc = new XmlDocument();
+                    //doc.LoadXml(result);
+
+                    //string xmlString = doc.OuterXml.ToString();
+                    //XmlNodeReader reader = new XmlNodeReader(doc);
+
+                    //using (reader)
+                    //{
+                    //    envelope = (Envelope)serializer.Deserialize(reader);
+                    //}
+
                 }
 
                 chavePesquisada = dues[i];
