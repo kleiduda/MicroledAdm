@@ -42,6 +42,7 @@
                                                 <p class="help-block">
                                                     Clique no botão "Escolher arquivo" e selecione o arquivo .csv ou .txt de DUEs
                                                 </p>
+                                                <asp:CheckBox Text="Buscar Na Base" runat="server" ID="searchInDataBase" width="200" />
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="pull-right">                                                    
@@ -70,8 +71,12 @@
                     <br />
 
                     <div class="row">
-                        <div class="col-md-12 pull-right">
+                        <div class="col-md-11">
                             <asp:ImageButton ID="btnGerarExcel" Visible="false" runat="server" OnClick="btnGerarExcel_Click" ImageUrl="~/Content/imagens/btnExcel.png" />
+                        </div>
+                         <div class="col-md-1">
+                            <%--<asp:Button ID="btnDownloadZip" Visible="false" runat="server" Text="Download Xml" OnClick="btnDownloadZip_Click" />--%>
+<%--                             <asp:Button Text="Download File" runat="server" OnClick="DownloadFile" />--%>
                         </div>
                     </div>
 

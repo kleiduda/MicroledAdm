@@ -42,6 +42,7 @@
                                                 <p class="help-block">
                                                     Clique no botão "Escolher arquivo" e selecione o arquivo .csv ou .txt de DUEs
                                                 </p>
+                                                <asp:CheckBox Text="Buscar Na Base" runat="server" ID="searchInDataBase" width="200" />
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="pull-right">                                                    

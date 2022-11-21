@@ -9,6 +9,7 @@ namespace Cargill.DUE.Web.Models
         public string ChaveNfe { get; set; }
         public List<EventosNfe> Eventos { get; set; }
         public List<ProdutosNfe> Produtos { get; set; }
+        public string ArquivoXml { get; set; }
 
     }
 

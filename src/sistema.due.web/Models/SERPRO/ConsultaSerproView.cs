@@ -10,6 +10,7 @@ namespace Cargill.DUE.Web.Models.SERPRO
     {
 
         public string ChaveNfe { get; set; }
+        public string ArquivoXml { get; set; }
         public string UnidadeTributavel { get; set; }
         public string QtdeTributavel { get; set; }
         public string ItemNfe { get; set; }
