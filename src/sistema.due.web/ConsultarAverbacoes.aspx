@@ -42,7 +42,7 @@
                                                 <p class="help-block">
                                                     Clique no botão "Escolher arquivo" e selecione o arquivo .csv ou .txt de DUEs
                                                 </p>
-                                                <asp:CheckBox Text="Buscar Na Base" runat="server" ID="searchInDataBase" width="200" />
+                                                <asp:CheckBox Text="Buscar Na Base" runat="server" ID="searchInDataBase" width="200" Checked="true" />
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="pull-right">                                                    
@@ -101,11 +101,12 @@
                                         <asp:BoundField DataField="UnidadeTributavel" HeaderText="Unidade Tributavel" />
                                         <asp:BoundField DataField="QtdeTributavel" HeaderText="Qtde Tributavel" />
                                         <asp:BoundField DataField="DataDoEmbarque" HeaderText="Data do Embarque" />
-                                        <asp:BoundField DataField="DataDaAverbacao" HeaderText="Data Averbacao" />
+                                        <asp:BoundField DataField="DataAverbacao" HeaderText="Data Averbacao" />
                                         <asp:BoundField DataField="QtdeAverbada" HeaderText="QtdeAverbada" />
                                         <asp:BoundField DataField="Due" HeaderText="Due" />
                                         <asp:BoundField DataField="ItemDue" HeaderText="Item Due" />
                                         <asp:BoundField DataField="Descricao" HeaderText="Descrição" />
+                                        <asp:BoundField DataField="DataDaConsulta" HeaderText="Consulta Serpro" />
                                         
                                     </Columns>
                                 </asp:GridView>

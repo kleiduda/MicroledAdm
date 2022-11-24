@@ -111,7 +111,7 @@ namespace Sistema.DUE.Web.DAO
             param.Add("unidadeTributavel", consultaSerproViews.UnidadeTributavel, DbType.String, ParameterDirection.Input);
             param.Add("qtdeTributavel", consultaSerproViews.QtdeTributavel, DbType.String, ParameterDirection.Input);
             param.Add("dataDoEmbarque", consultaSerproViews.DataDoEmbarque, DbType.DateTime, ParameterDirection.Input);
-            param.Add("dataAverbacao", consultaSerproViews.DataDaAverbacao, DbType.DateTime, ParameterDirection.Input);
+            param.Add("dataAverbacao", consultaSerproViews.DataAverbacao, DbType.DateTime, ParameterDirection.Input);
             param.Add("qtdeAverbada", consultaSerproViews.QtdeAverbada, DbType.String, ParameterDirection.Input);
             param.Add("due", consultaSerproViews.Due, DbType.String, ParameterDirection.Input);
             param.Add("itemDue", consultaSerproViews.ItemDue, DbType.String, ParameterDirection.Input);
@@ -137,6 +137,25 @@ namespace Sistema.DUE.Web.DAO
             using (SqlConnection con = new SqlConnection(Banco.StringConexao()))
             {
                 var result = con.Query<ConsultaSerproView>(query, param).ToList();
+                consultas = result;
+            }
+
+            return consultas;
+        }
+        public ConsultaSerproView ConsultaPriorizadaNaBase(string chave)
+        {
+            ConsultaSerproView consultas = new ConsultaSerproView();
+
+            string query = @"SELECT * 
+                             FROM TB_NF_Pesquisada_SEFAZ a
+                             WHERE a.ChaveNfe = @chave";
+
+            DynamicParameters param = new DynamicParameters();
+            param.Add("chave", chave);
+
+            using (SqlConnection con = new SqlConnection(Banco.StringConexao()))
+            {
+                var result = con.Query<ConsultaSerproView>(query, param).FirstOrDefault();
                 consultas = result;
             }
 

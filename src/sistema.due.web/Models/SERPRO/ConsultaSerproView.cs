@@ -15,10 +15,11 @@ namespace Cargill.DUE.Web.Models.SERPRO
         public string QtdeTributavel { get; set; }
         public string ItemNfe { get; set; }
         public string DataDoEmbarque { get; set; }
-        public string DataDaAverbacao { get; set; }
+        public string DataAverbacao { get; set; }
         public string QtdeAverbada { get; set; }
         public string Due { get; set; }
         public string ItemDue { get; set; }
         public string Descricao { get; set; }
+        public string DataDaConsulta { get; set; }
     }
 }

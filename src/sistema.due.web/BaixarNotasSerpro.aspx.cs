@@ -68,7 +68,6 @@ namespace Sistema.DUE.Web
                 listChaves = nfe.Distinct().ToList();
                 //
                 consultaAverbacoes = _totalDeConsultasREalizadas.DownloadXmlFile(listChaves);
-                //CreateZipFileContent(consultaAverbacoes);
                 List<XmlDocument> filesXml = new List<XmlDocument>();
                 byte[] compressedBytes;
                 string fileNameZip = "Consulta" + DateTime.Now.ToString("yyyy-MM-dd hhmmss") + ".zip";
@@ -113,7 +112,7 @@ namespace Sistema.DUE.Web
                                 QtdeTributavel = consultaAverbacoesXml[i].Produtos.Where(x => x.NItem == numeroItem).FirstOrDefault().QtdeTributavel,
                                 ItemNfe = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemNfe,
                                 DataDoEmbarque = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDoEmbarque,
-                                DataDaAverbacao = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDaAverbacao,
+                                DataAverbacao = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDaAverbacao,
                                 QtdeAverbada = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.QtdeAverbada,
                                 Due = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.Due,
                                 ItemDue = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemDue,
