@@ -130,7 +130,6 @@ namespace Sistema.DUE.Web
                 {
                     var list = new List<EventosNfe>();
 
-
                     for (int j = 0; j < consultaAverbacoesXml[i].Eventos.Count(); j++)
                     {
                         string numeroItem = string.Empty;
@@ -379,38 +378,41 @@ namespace Sistema.DUE.Web
             List<ProdutosNfe> produtosNfe = new List<ProdutosNfe>();
 
             if (consulta != null)
-
-                foreach (var item in consulta.Body.nfeConsultaNFeLogResult.retConsNFeLog.NFeLog.procEventoNFe.Where(x => x.evento.infEvento.detEvento.itensAverbados != null))
+                if (consulta.Body.nfeConsultaNFeLogResult.retConsNFeLog.NFeLog.procEventoNFe != null)
                 {
-                    for (int i = 0; i < item.evento.infEvento.detEvento.itensAverbados.Count(); i++)
+                    foreach (var item in consulta.Body.nfeConsultaNFeLogResult.retConsNFeLog.NFeLog.procEventoNFe.Where(x => x.evento.infEvento.detEvento.itensAverbados != null))
                     {
-                        eventosNfe.Add(new EventosNfe()
+                        for (int i = 0; i < item.evento.infEvento.detEvento.itensAverbados.Count(); i++)
                         {
-                            Descricao = item.evento.infEvento.detEvento.descEvento,
-                            Evento = new EventoNFE()
+                            eventosNfe.Add(new EventosNfe()
                             {
-                                InfoEvento = new InfoEventoNFE()
+                                Descricao = item.evento.infEvento.detEvento.descEvento,
+                                Evento = new EventoNFE()
                                 {
-                                    DetalheEvento = new DetalheEventoNFE()
+                                    InfoEvento = new InfoEventoNFE()
                                     {
-                                        ItensAverbados = new ItensAverbados()
+                                        DetalheEvento = new DetalheEventoNFE()
                                         {
-                                            //UnidadeTributavel = item.,
-                                            //QtdeTributavel = result.nfeProc.NFe.infNFe.det.FirstOrDefault().prod.qTrib,
-                                            ItemNfe = item.evento.infEvento.detEvento.itensAverbados?[i].nItem,
-                                            DataDoEmbarque = item.evento.infEvento.detEvento.itensAverbados?[i].dhEmbarque,
-                                            DataDaAverbacao = item.evento.infEvento.detEvento.itensAverbados?[i].dhAverbacao,
-                                            QtdeAverbada = item.evento.infEvento.detEvento.itensAverbados?[i].qItem,
-                                            Due = item.evento.infEvento.detEvento.itensAverbados?[i].nDue,
-                                            ItemDue = item.evento.infEvento.detEvento.itensAverbados?[i].nItemDue
+                                            ItensAverbados = new ItensAverbados()
+                                            {
+                                                //UnidadeTributavel = item.,
+                                                //QtdeTributavel = result.nfeProc.NFe.infNFe.det.FirstOrDefault().prod.qTrib,
+                                                ItemNfe = item.evento.infEvento.detEvento.itensAverbados?[i].nItem,
+                                                DataDoEmbarque = item.evento.infEvento.detEvento.itensAverbados?[i].dhEmbarque,
+                                                DataDaAverbacao = item.evento.infEvento.detEvento.itensAverbados?[i].dhAverbacao,
+                                                QtdeAverbada = item.evento.infEvento.detEvento.itensAverbados?[i].qItem,
+                                                Due = item.evento.infEvento.detEvento.itensAverbados?[i].nDue,
+                                                ItemDue = item.evento.infEvento.detEvento.itensAverbados?[i].nItemDue
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        });
-                    }
+                            });
+                        }
 
+                    }
                 }
+                
             if (consulta != null)
             {
                 foreach (var item in consulta.Body.nfeConsultaNFeLogResult.retConsNFeLog.NFeLog.nfeProc.NFe.infNFe.det)

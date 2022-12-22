@@ -34,13 +34,28 @@ namespace Sistema.DUE.Web.DAO
             int updateConsulta = 0;
             using (SqlConnection con = new SqlConnection(Banco.StringConexao()))
             {
-                updateConsulta = con.Execute("INSERT INTO TB_LOG_CONSULTA_NFe (ID_Usuario, Data_Consulta, Qtde) VALUES (1, GETDATE(), 1)");
+                //gravar o objeto total e gravar na base - TODO
+                //cada vez que entrar grava a quantidade de consultas validas - TODO
+                var consultas = con.Query<TotalDeConsultasRealizadas>(@"select a.ID_Usuario as IdUsuario, a.Data_Consulta as DataConsulta, a.Qtde as QtdeDiaria
+                                                                     from TB_LOG_CONSULTA_NFe a
+                                                                     where a.ID_Usuario = 1
+                                                                     order by Data_consulta desc").FirstOrDefault();
+                if (consultas.DataConsulta.Day < DateTime.Now.Day)
+                {
+                    updateConsulta = con.Execute("INSERT INTO TB_LOG_CONSULTA_NFe (ID_Usuario, Data_Consulta, Qtde) VALUES (1, GETDATE(), 1)");
+                }
+                else
+                {
+                    updateConsulta = con.Execute(@"UPDATE TB_LOG_CONSULTA_NFe SET qtde = @qtde WHERE ID_Usuario = 1 AND Day(Data_consulta) = DAY(GETDATE())", new { qtde = consultas.QtdeDiaria + 1 });
+                }
+                //updateConsulta = con.Execute("INSERT INTO TB_LOG_CONSULTA_NFe (ID_Usuario, Data_Consulta, Qtde) VALUES (1, GETDATE(), 1)");
             }
 
         }
 
         public void GravarConsultaNaBase(ConsultaSerproView consultaSerproViews)
         {
+            string queryConsulta = @"SELECT 1 FROM TB_NF_Pesquisada_SEFAZ WHERE ChaveNfe = @ChaveNfe";
             string query = @"INSERT INTO TB_NF_Pesquisada_SEFAZ 
             (ChaveNfe
             ,ItemNfe
@@ -56,35 +71,10 @@ namespace Sistema.DUE.Web.DAO
             ,DataDaConsulta)
             VALUES (@chaveNfe, @itemNfe, @unidadeTributavel, @qtdeTributavel, @dataDoEmbarque, @dataAverbacao, @qtdeAverbada, @due, @itemDue, @descricao, @arquivoXml, GETDATE())";
 
-            string query2 = @"IF EXISTS (SELECT 1 FROM TB_NF_Pesquisada_SEFAZ WHERE 
-                                ChaveNfe = @chaveNfe AND 
-                                Due = @due AND 
-                                ItemDue = @itemDue AND 
-                                QtdeTributavel = @qtdeTributavel AND 
-                                DataDoEmbarque = @dataDoEmbarque AND
-                                DataAverbacao = @dataAverbacao AND
-                                QtdeAverbada = @qtdeAverbada AND
-                                Descricao = @descricao)
+            string query2 = @"
                                 BEGIN
-                                    UPDATE TB_NF_Pesquisada_SEFAZ 
-                                    SET UnidadeTributavel = @unidadeTributavel
-                                       ,QtdeTributavel = @qtdeTributavel
-                                       ,DataDoEmbarque = @dataDoEmbarque
-                                       ,DataAverbacao = @dataAverbacao
-                                       ,QtdeAverbada = @qtdeAverbada
-                                       ,Due = @due
-                                       ,ItemDue = @itemDue
-                                       ,Descricao = @descricao
-                                       ,ArquivoXML = @arquivoXml
-                                       ,DataDaConsulta = GETDATE()
-                                    WHERE ChaveNfe = @chaveNfe AND 
-                                          Due = @due AND 
-                                          ItemDue = @itemDue AND 
-                                          QtdeTributavel = @qtdeTributavel AND 
-                                          DataDoEmbarque = @dataDoEmbarque AND
-                                          DataAverbacao = @dataAverbacao AND
-                                          QtdeAverbada = @qtdeAverbada AND
-                                          Descricao = @descricao;
+                                    DELETE TB_NF_Pesquisada_SEFAZ 
+                                    WHERE ChaveNfe = @chaveNfe 
                                 END
                               ELSE
                                 BEGIN
@@ -107,14 +97,14 @@ namespace Sistema.DUE.Web.DAO
             DynamicParameters param = new DynamicParameters();
 
             param.Add("chaveNfe", consultaSerproViews.ChaveNfe, DbType.String, ParameterDirection.Input);
-            param.Add("itemNfe", consultaSerproViews.ItemNfe, DbType.String, ParameterDirection.Input);
+            param.Add("itemNfe", consultaSerproViews.ItemNfe != null ? consultaSerproViews.ItemNfe : null);
             param.Add("unidadeTributavel", consultaSerproViews.UnidadeTributavel, DbType.String, ParameterDirection.Input);
             param.Add("qtdeTributavel", consultaSerproViews.QtdeTributavel, DbType.String, ParameterDirection.Input);
-            param.Add("dataDoEmbarque", consultaSerproViews.DataDoEmbarque, DbType.DateTime, ParameterDirection.Input);
-            param.Add("dataAverbacao", consultaSerproViews.DataAverbacao, DbType.DateTime, ParameterDirection.Input);
-            param.Add("qtdeAverbada", consultaSerproViews.QtdeAverbada, DbType.String, ParameterDirection.Input);
-            param.Add("due", consultaSerproViews.Due, DbType.String, ParameterDirection.Input);
-            param.Add("itemDue", consultaSerproViews.ItemDue, DbType.String, ParameterDirection.Input);
+            param.Add("dataDoEmbarque", consultaSerproViews.DataDoEmbarque != null ? consultaSerproViews.DataDoEmbarque : null, DbType.DateTime, ParameterDirection.Input);
+            param.Add("dataAverbacao", consultaSerproViews.DataAverbacao != null ? consultaSerproViews.DataAverbacao : null , DbType.DateTime, ParameterDirection.Input);
+            param.Add("qtdeAverbada", consultaSerproViews.QtdeAverbada != null ? consultaSerproViews.QtdeAverbada : null, DbType.String, ParameterDirection.Input);
+            param.Add("due", consultaSerproViews.Due != null ? consultaSerproViews.Due : null , DbType.String, ParameterDirection.Input);
+            param.Add("itemDue", consultaSerproViews.ItemDue != null ? consultaSerproViews.ItemDue : null , DbType.String, ParameterDirection.Input);
             param.Add("descricao", consultaSerproViews.Descricao, DbType.String, ParameterDirection.Input);
             param.Add("arquivoXml", consultaSerproViews.ArquivoXml, DbType.String, ParameterDirection.Input);
             using (SqlConnection con = new SqlConnection(Banco.StringConexao()))

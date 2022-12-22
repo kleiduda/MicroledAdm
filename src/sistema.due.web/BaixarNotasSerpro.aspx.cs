@@ -64,6 +64,22 @@ namespace Sistema.DUE.Web
             bool local = this.searchInDataBase.Checked;
             if (local)
             {
+                List<string> _chavesNaoEncontradas = new List<string>();
+                for (int i = 0; i < nfe.Count(); i++)
+                {
+                    var _chaveConsultada = _totalDeConsultasREalizadas.ConsultaPriorizadaNaBase(nfe[i]);
+                    if (_chaveConsultada == null)
+                    {
+                        //montar a lista de string para consulta no serpro
+                        _chavesNaoEncontradas.Add(nfe[i]);
+                    }
+                }
+                //
+                if (_chavesNaoEncontradas.Count() > 0)
+                {
+                    //consulta no serpro
+                    _consultarAverbacoes.ConsultaChaveSerpro(_chavesNaoEncontradas);
+                }
                 List<string> listChaves = new List<string>();
                 listChaves = nfe.Distinct().ToList();
                 //
@@ -88,70 +104,7 @@ namespace Sistema.DUE.Web
             }
             else
             {
-                //consultaAverbacoes = ConsultarAverbacoesNfe(nfe);
-                //
-                var consultaAverbacoesXml = _consultarAverbacoes.ConsultarAverbacoesXmlNota(nfe);
-                //ponto de alteracao
-                for (int i = 0; i < consultaAverbacoesXml.Count(); i++)
-                {
-                    if (consultaAverbacoesXml[i].Eventos.Count() > 0)
-                    {
-                        var list = new List<EventosNfe>();
-
-
-                        for (int j = 0; j < consultaAverbacoesXml[i].Eventos.Count(); j++)
-                        {
-                            string numeroItem = string.Empty;
-                            numeroItem = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemNfe;
-                            //
-                            consultaSerproView.Add(new ConsultaSerproView()
-                            {
-                                ChaveNfe = consultaAverbacoesXml[i].ChaveNfe,
-                                ArquivoXml = consultaAverbacoesXml[i].ArquivoXml,
-                                UnidadeTributavel = consultaAverbacoesXml[i].Produtos.Where(x => x.NItem == numeroItem).FirstOrDefault().UnidadeTributavel,
-                                QtdeTributavel = consultaAverbacoesXml[i].Produtos.Where(x => x.NItem == numeroItem).FirstOrDefault().QtdeTributavel,
-                                ItemNfe = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemNfe,
-                                DataDoEmbarque = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDoEmbarque,
-                                DataAverbacao = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDaAverbacao,
-                                QtdeAverbada = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.QtdeAverbada,
-                                Due = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.Due,
-                                ItemDue = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemDue,
-                                Descricao = consultaAverbacoesXml[i].Eventos[j].Descricao,
-                            });
-
-                        }
-                    }
-                    else
-                    {
-                        if (consultaAverbacoesXml[i].Produtos.Count() > 0)
-                        {
-                            for (int p = 0; p < consultaAverbacoesXml[i].Produtos.Count(); p++)
-                            {
-                                consultaSerproView.Add(new ConsultaSerproView()
-                                {
-                                    ChaveNfe = consultaAverbacoesXml[i].ChaveNfe,
-                                    ArquivoXml = consultaAverbacoesXml[i].ArquivoXml,
-                                    UnidadeTributavel = consultaAverbacoesXml[i].Produtos?[p].UnidadeTributavel,
-                                    QtdeTributavel = consultaAverbacoesXml[i].Produtos?[p].QtdeTributavel,
-                                    Descricao = "Nota sem averbação"
-                                });
-                            }
-                        }
-                        else
-                        {
-                            consultaSerproView.Add(new ConsultaSerproView()
-                            {
-                                ChaveNfe = consultaAverbacoesXml[i].ChaveNfe,
-                                ArquivoXml = consultaAverbacoesXml[i].ArquivoXml,
-                                Descricao = "Erro ao tentar montar a nota em tela"
-                            });
-                        }
-                    }
-                }
-                //gravando dados na tabela
-                _consultarAverbacoes.gravarNotaNaBase(consultaSerproView);
-                //buscando dados na tabela
-                var consultas = _consultarAverbacoes.BuscarConsultasNaBase(consultaSerproView);
+                _consultarAverbacoes.ConsultaChaveSerpro(nfe);
                 List<string> listChaves = new List<string>();
                 listChaves = nfe.Distinct().ToList();
                 //
@@ -172,9 +125,6 @@ namespace Sistema.DUE.Web
                 CreateZipFileContent(consultaAverbacoes);
                 DeleteFilesXml();
 
-
-
-                this.btnGerarExcel.Visible = consultas.Count > 0;
                 this.qtde_consultas.Text = _totalDeConsultasREalizadas.ObterTotalDeConsultas().ConsultasRealizadas.ToString();
             }
 
