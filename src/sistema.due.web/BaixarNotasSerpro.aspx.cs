@@ -27,7 +27,7 @@ namespace Sistema.DUE.Web
         {
             //consultaAverbacoes = new List<ResultadoConsultaNFE>();
             var _totalConsultas = _totalDeConsultasREalizadas.ObterTotalDeConsultas();
-            qtde_consultas.Text = _totalConsultas.ConsultasRealizadas.ToString();
+            qtde_consultas.Text = _totalConsultas.ToString();
         }
 
         override public void VerifyRenderingInServerForm(Control control)
@@ -70,19 +70,20 @@ namespace Sistema.DUE.Web
                     var _chaveConsultada = _totalDeConsultasREalizadas.ConsultaPriorizadaNaBase(nfe[i]);
                     if (_chaveConsultada == null)
                     {
-                        //montar a lista de string para consulta no serpro
                         _chavesNaoEncontradas.Add(nfe[i]);
                     }
                 }
                 //
                 if (_chavesNaoEncontradas.Count() > 0)
                 {
-                    //consulta no serpro
-                    _consultarAverbacoes.ConsultaChaveSerpro(_chavesNaoEncontradas);
+                    var totalConsultas = _consultarAverbacoes.ConsultaChaveSerpro(_chavesNaoEncontradas);
+                    _totalDeConsultasREalizadas.GravarConsultaRealizad(totalConsultas);
                 }
                 List<string> listChaves = new List<string>();
                 listChaves = nfe.Distinct().ToList();
                 //
+                var totalConsultasRealizadas = listChaves.Count() - _chavesNaoEncontradas.Count();
+                _totalDeConsultasREalizadas.GravarConsultaRealizad(totalConsultasRealizadas);
                 consultaAverbacoes = _totalDeConsultasREalizadas.DownloadXmlFile(listChaves);
                 List<XmlDocument> filesXml = new List<XmlDocument>();
                 byte[] compressedBytes;
@@ -100,14 +101,15 @@ namespace Sistema.DUE.Web
                 DeleteFilesXml();
 
                 this.btnGerarExcel.Visible = nfe.Count > 0;
-                this.qtde_consultas.Text = _totalDeConsultasREalizadas.ObterTotalDeConsultas().ConsultasRealizadas.ToString();
+                this.qtde_consultas.Text = _totalDeConsultasREalizadas.ObterTotalDeConsultas().ToString();
             }
             else
             {
-                _consultarAverbacoes.ConsultaChaveSerpro(nfe);
+                var totalConsultasRealizadas = _consultarAverbacoes.ConsultaChaveSerpro(nfe);
                 List<string> listChaves = new List<string>();
                 listChaves = nfe.Distinct().ToList();
                 //
+                _totalDeConsultasREalizadas.GravarConsultaRealizad(totalConsultasRealizadas);
                 consultaAverbacoes = _totalDeConsultasREalizadas.DownloadXmlFile(listChaves);
                 //CreateZipFileContent(consultaAverbacoes);
                 List<XmlDocument> filesXml = new List<XmlDocument>();
@@ -125,7 +127,7 @@ namespace Sistema.DUE.Web
                 CreateZipFileContent(consultaAverbacoes);
                 DeleteFilesXml();
 
-                this.qtde_consultas.Text = _totalDeConsultasREalizadas.ObterTotalDeConsultas().ConsultasRealizadas.ToString();
+                this.qtde_consultas.Text = _totalDeConsultasREalizadas.ObterTotalDeConsultas().ToString();
             }
 
 

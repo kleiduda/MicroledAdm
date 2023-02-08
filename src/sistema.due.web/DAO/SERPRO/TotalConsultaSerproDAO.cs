@@ -9,107 +9,88 @@ using System.Linq;
 using System;
 using Cargill.DUE.Web.Models.SERPRO;
 using System.Data;
+using System.Web.Optimization;
+using System.Transactions;
 
 namespace Sistema.DUE.Web.DAO
 {
     public class TotalConsultaSerproDAO
     {
-        public TotalDeConsultasRealizadas ObterTotalDeConsultas()
+        public int ObterTotalDeConsultas()
         {
             //MemoryCache cache = MemoryCache.Default;
 
             //var consultas = cache["TotalDeConsultasRealizadas.ObterTotalDeConsultas"] as TotalDeConsultasRealizadas;
 
-            var consultas = new TotalDeConsultasRealizadas();
+            int totalconsultas = 0;
             using (SqlConnection con = new SqlConnection(Banco.StringConexao()))
             {
-                consultas = con.Query<TotalDeConsultasRealizadas>(@"SELECT [total] as ConsultasRealizadas  FROM [adm_due].[dbo].[Total_consulta_NFe]").FirstOrDefault();
+                totalconsultas = con.Query<int>(@"SELECT SUM(Qtde)
+                                                  FROM TB_LOG_CONSULTA_NFe
+                                                  WHERE Data_consulta >= DATEADD(day, -21, GETDATE())
+                                                  AND Data_consulta <= GETDATE();").FirstOrDefault();
             }
 
-            return consultas;
+            return totalconsultas;
         }
 
-        public void GravarConsultaRealizad()
+        public void GravarConsultaRealizad(int quantidade)
         {
-            int updateConsulta = 0;
+            string query = @"INSERT INTO TB_LOG_CONSULTA_NFe (ID_Usuario, Data_Consulta, Qtde) VALUES (1, GETDATE(), @Quantidade)";
             using (SqlConnection con = new SqlConnection(Banco.StringConexao()))
             {
-                //gravar o objeto total e gravar na base - TODO
-                //cada vez que entrar grava a quantidade de consultas validas - TODO
-                var consultas = con.Query<TotalDeConsultasRealizadas>(@"select a.ID_Usuario as IdUsuario, a.Data_Consulta as DataConsulta, a.Qtde as QtdeDiaria
-                                                                     from TB_LOG_CONSULTA_NFe a
-                                                                     where a.ID_Usuario = 1
-                                                                     order by Data_consulta desc").FirstOrDefault();
-                if (consultas.DataConsulta.Day < DateTime.Now.Day)
-                {
-                    updateConsulta = con.Execute("INSERT INTO TB_LOG_CONSULTA_NFe (ID_Usuario, Data_Consulta, Qtde) VALUES (1, GETDATE(), 1)");
-                }
-                else
-                {
-                    updateConsulta = con.Execute(@"UPDATE TB_LOG_CONSULTA_NFe SET qtde = @qtde WHERE ID_Usuario = 1 AND Day(Data_consulta) = DAY(GETDATE())", new { qtde = consultas.QtdeDiaria + 1 });
-                }
-                //updateConsulta = con.Execute("INSERT INTO TB_LOG_CONSULTA_NFe (ID_Usuario, Data_Consulta, Qtde) VALUES (1, GETDATE(), 1)");
+                con.Execute(query, new {Quantidade = quantidade});
             }
-
         }
 
-        public void GravarConsultaNaBase(ConsultaSerproView consultaSerproViews)
+        public void GravarConsultaNaBase(List<ConsultaSerproView> consultaSerproViews)
         {
-            string queryConsulta = @"SELECT 1 FROM TB_NF_Pesquisada_SEFAZ WHERE ChaveNfe = @ChaveNfe";
-            string query = @"INSERT INTO TB_NF_Pesquisada_SEFAZ 
-            (ChaveNfe
-            ,ItemNfe
-            ,UnidadeTributavel
-            ,QtdeTributavel
-            ,DataDoEmbarque
-            ,DataAverbacao
-            ,QtdeAverbada
-            ,Due
-            ,ItemDue
-            ,Descricao
-            ,ArquivoXML
-            ,DataDaConsulta)
-            VALUES (@chaveNfe, @itemNfe, @unidadeTributavel, @qtdeTributavel, @dataDoEmbarque, @dataAverbacao, @qtdeAverbada, @due, @itemDue, @descricao, @arquivoXml, GETDATE())";
+            string _delete = @"IF EXISTS (SELECT 1 FROM TB_NF_Pesquisada_SEFAZ WHERE ChaveNfe = @chaveNfe)
+                               BEGIN
+                                   DELETE FROM TB_NF_Pesquisada_SEFAZ WHERE ChaveNfe = @chaveNfe;
+                               END";
+            string _insert = @"INSERT INTO TB_NF_Pesquisada_SEFAZ 
+                               (ChaveNfe
+                               ,ItemNfe
+                               ,UnidadeTributavel
+                               ,QtdeTributavel
+                               ,DataDoEmbarque
+                               ,DataAverbacao
+                               ,QtdeAverbada
+                               ,Due
+                               ,ItemDue
+                               ,Descricao
+                               ,ArquivoXML
+                               ,DataDaConsulta)
+                               VALUES (@chaveNfe, @itemNfe, @unidadeTributavel, @qtdeTributavel, @dataDoEmbarque, @dataAverbacao, @qtdeAverbada, @due, @itemDue, @descricao, @arquivoXml, GETDATE())";
+            string _log = @"";
 
-            string query2 = @"
-                                BEGIN
-                                    DELETE TB_NF_Pesquisada_SEFAZ 
-                                    WHERE ChaveNfe = @chaveNfe 
-                                END
-                              ELSE
-                                BEGIN
-                                    INSERT INTO TB_NF_Pesquisada_SEFAZ 
-                                    (ChaveNfe
-                                    ,ItemNfe
-                                    ,UnidadeTributavel
-                                    ,QtdeTributavel
-                                    ,DataDoEmbarque
-                                    ,DataAverbacao
-                                    ,QtdeAverbada
-                                    ,Due
-                                    ,ItemDue
-                                    ,Descricao
-                                    ,ArquivoXML
-                                    ,DataDaConsulta)
-                                    VALUES (@chaveNfe, @itemNfe, @unidadeTributavel, @qtdeTributavel, @dataDoEmbarque, @dataAverbacao, @qtdeAverbada, @due, @itemDue, @descricao, @arquivoXml, GETDATE())
-                                END";
-            
+            using (var connection = new SqlConnection(Banco.StringConexao()))
+            {
+                connection.Open();
+                connection.Execute(_delete, new { chaveNfe = consultaSerproViews[0].ChaveNfe });
+            }
+
             DynamicParameters param = new DynamicParameters();
-
-            param.Add("chaveNfe", consultaSerproViews.ChaveNfe, DbType.String, ParameterDirection.Input);
-            param.Add("itemNfe", consultaSerproViews.ItemNfe != null ? consultaSerproViews.ItemNfe : null);
-            param.Add("unidadeTributavel", consultaSerproViews.UnidadeTributavel, DbType.String, ParameterDirection.Input);
-            param.Add("qtdeTributavel", consultaSerproViews.QtdeTributavel, DbType.String, ParameterDirection.Input);
-            param.Add("dataDoEmbarque", consultaSerproViews.DataDoEmbarque != null ? consultaSerproViews.DataDoEmbarque : null, DbType.DateTime, ParameterDirection.Input);
-            param.Add("dataAverbacao", consultaSerproViews.DataAverbacao != null ? consultaSerproViews.DataAverbacao : null , DbType.DateTime, ParameterDirection.Input);
-            param.Add("qtdeAverbada", consultaSerproViews.QtdeAverbada != null ? consultaSerproViews.QtdeAverbada : null, DbType.String, ParameterDirection.Input);
-            param.Add("due", consultaSerproViews.Due != null ? consultaSerproViews.Due : null , DbType.String, ParameterDirection.Input);
-            param.Add("itemDue", consultaSerproViews.ItemDue != null ? consultaSerproViews.ItemDue : null , DbType.String, ParameterDirection.Input);
-            param.Add("descricao", consultaSerproViews.Descricao, DbType.String, ParameterDirection.Input);
-            param.Add("arquivoXml", consultaSerproViews.ArquivoXml, DbType.String, ParameterDirection.Input);
-            using (SqlConnection con = new SqlConnection(Banco.StringConexao()))
+            for (int i = 0; i < consultaSerproViews.Count; i++)
             {
-                con.Execute(query2, param);
+                param.Add("chaveNfe", consultaSerproViews[i].ChaveNfe, DbType.String, ParameterDirection.Input);
+                param.Add("itemNfe", consultaSerproViews[i].ItemNfe != null ? consultaSerproViews[i].ItemNfe : null);
+                param.Add("unidadeTributavel", consultaSerproViews[i].UnidadeTributavel, DbType.String, ParameterDirection.Input);
+                param.Add("qtdeTributavel", consultaSerproViews[i].QtdeTributavel, DbType.String, ParameterDirection.Input);
+                param.Add("dataDoEmbarque", consultaSerproViews[i].DataDoEmbarque != null ? consultaSerproViews[i].DataDoEmbarque : null, DbType.DateTime, ParameterDirection.Input);
+                param.Add("dataAverbacao", consultaSerproViews[i].DataAverbacao != null ? consultaSerproViews[i].DataAverbacao : null, DbType.DateTime, ParameterDirection.Input);
+                param.Add("qtdeAverbada", consultaSerproViews[i].QtdeAverbada != null ? consultaSerproViews[i].QtdeAverbada : null, DbType.String, ParameterDirection.Input);
+                param.Add("due", consultaSerproViews[i].Due != null ? consultaSerproViews[i].Due : null, DbType.String, ParameterDirection.Input);
+                param.Add("itemDue", consultaSerproViews[i].ItemDue != null ? consultaSerproViews[i].ItemDue : null, DbType.String, ParameterDirection.Input);
+                param.Add("descricao", consultaSerproViews[i].Descricao, DbType.String, ParameterDirection.Input);
+                param.Add("arquivoXml", consultaSerproViews[i].ArquivoXml, DbType.String, ParameterDirection.Input);
+                //
+                using (var connection = new SqlConnection(Banco.StringConexao()))
+                {
+                    connection.Open();
+                    connection.Execute(_insert, param);
+                }
             }
         }
 
@@ -171,7 +152,7 @@ namespace Sistema.DUE.Web.DAO
             xmlsResult = xmls.Distinct().ToList();
 
             return xmlsResult;
-            
+
         }
     }
 }

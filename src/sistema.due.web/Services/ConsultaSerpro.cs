@@ -70,7 +70,7 @@ namespace Cargill.DUE.Web.Services
                     {
                         var itemProperty = item.Children<JProperty>().Children().Children().Children().Children().Children();
                     }
-                    _consultaSerproDao.GravarConsultaRealizad();
+                    //_consultaSerproDao.GravarConsultaRealizad();
                     consultaAverbacoes = tokenResponse.Content.ReadAsAsync<ConsultaAverbacoesNFE>(new[] { new JsonMediaTypeFormatter() }).Result;
                 }
                 else
@@ -102,7 +102,7 @@ namespace Cargill.DUE.Web.Services
                 HttpResponseMessage tokenResponse = await client.GetAsync(Uri.EscapeUriString(client.BaseAddress.ToString()), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
                 if (tokenResponse.IsSuccessStatusCode)
                 {
-                    _consultaSerproDao.GravarConsultaRealizad();
+                    //_consultaSerproDao.GravarConsultaRealizad();
                     xmlResult = tokenResponse.Content.ReadAsStringAsync().Result;
                 }
                 else

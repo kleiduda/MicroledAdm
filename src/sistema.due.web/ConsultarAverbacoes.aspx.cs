@@ -32,13 +32,14 @@ namespace Sistema.DUE.Web
         private readonly TotalConsultaSerproDAO _totalDeConsultasREalizadas = new TotalConsultaSerproDAO();
         public List<ConsultaSerproView> consultas = new List<ConsultaSerproView>();
         public List<string> _consultaAverbacoes = new List<string>();
+        public int totalConsultasValidas = 0;
 
 
         protected void Page_Load(object sender, EventArgs e)
         {
             //consultaAverbacoes = new List<ResultadoConsultaNFE>();
             var _totalConsultas = _totalDeConsultasREalizadas.ObterTotalDeConsultas();
-            qtde_consultas.Text = _totalConsultas.ConsultasRealizadas.ToString();
+            qtde_consultas.Text = _totalConsultas.ToString();
         }
 
         override public void VerifyRenderingInServerForm(Control control)
@@ -92,9 +93,11 @@ namespace Sistema.DUE.Web
                 if (_chavesNaoEncontradas.Count() > 0)
                 {
                     //consulta no serpro
-                    ConsultaChaveSerpro(_chavesNaoEncontradas);
+                    var totalConsultas = ConsultaChaveSerpro(_chavesNaoEncontradas);
+                    _totalDeConsultasREalizadas.GravarConsultaRealizad(totalConsultas);
                 }
-
+                var totalConsultasRealizadas = dues.Count() - _chavesNaoEncontradas.Count();
+                _totalDeConsultasREalizadas.GravarConsultaRealizad(totalConsultasRealizadas);
                 consultas = _totalDeConsultasREalizadas.BuscarConsultasNaBase(dues);
                 //populando em tela
                 this.gvNotasFiscais.DataSource = consultas;
@@ -102,11 +105,12 @@ namespace Sistema.DUE.Web
 
                 this.btnGerarExcel.Visible = dues.Count > 0;
                 //this.btnDownloadZip.Visible = dues.Count > 0;
-                this.qtde_consultas.Text = _totalDeConsultasREalizadas.ObterTotalDeConsultas().ConsultasRealizadas.ToString();
+                this.qtde_consultas.Text = _totalDeConsultasREalizadas.ObterTotalDeConsultas().ToString();
             }
             else
             {
-                ConsultaChaveSerpro(dues);
+                var totalConsultasRealizadas = ConsultaChaveSerpro(dues);
+                _totalDeConsultasREalizadas.GravarConsultaRealizad(totalConsultasRealizadas);
                 consultas = _totalDeConsultasREalizadas.BuscarConsultasNaBase(dues);
 
                 //populando em tela
@@ -114,56 +118,59 @@ namespace Sistema.DUE.Web
                 this.gvNotasFiscais.DataBind();
 
                 this.btnGerarExcel.Visible = dues.Count > 0;
-                this.qtde_consultas.Text = _totalDeConsultasREalizadas.ObterTotalDeConsultas().ConsultasRealizadas.ToString();
+                this.qtde_consultas.Text = _totalDeConsultasREalizadas.ObterTotalDeConsultas().ToString();
 
             }
         }
 
-        public void ConsultaChaveSerpro(List<string> dues)
+        public int ConsultaChaveSerpro(List<string> dues)
         {
             List<ConsultaSerproView> consultaSerproView = new List<ConsultaSerproView>();
-            var consultaAverbacoesXml = ConsultarAverbacoesXmlNota(dues);
-            //ponto de alteracao
-            for (int i = 0; i < consultaAverbacoesXml.Count(); i++)
+            //passar uma due por vez
+            for (int i = 0; i < dues.Count; i++)
             {
-                if (consultaAverbacoesXml[i].Eventos.Count() > 0)
+                var consultaAverbacoesXml = ConsultarAverbacoesXmlNota(dues[i]);
+                //
+                //ponto de alteracao
+
+                if (consultaAverbacoesXml.Eventos.Count() > 0)
                 {
                     var list = new List<EventosNfe>();
 
-                    for (int j = 0; j < consultaAverbacoesXml[i].Eventos.Count(); j++)
+                    for (int j = 0; j < consultaAverbacoesXml.Eventos.Count(); j++)
                     {
                         string numeroItem = string.Empty;
-                        numeroItem = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemNfe;
+                        numeroItem = consultaAverbacoesXml.Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemNfe;
                         //
                         consultaSerproView.Add(new ConsultaSerproView()
                         {
-                            ChaveNfe = consultaAverbacoesXml[i].ChaveNfe,
-                            ArquivoXml = consultaAverbacoesXml[i].ArquivoXml,
-                            UnidadeTributavel = consultaAverbacoesXml[i].Produtos.Where(x => x.NItem == numeroItem).FirstOrDefault().UnidadeTributavel,
-                            QtdeTributavel = consultaAverbacoesXml[i].Produtos.Where(x => x.NItem == numeroItem).FirstOrDefault().QtdeTributavel,
-                            ItemNfe = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemNfe,
-                            DataDoEmbarque = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDoEmbarque,
-                            DataAverbacao = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDaAverbacao,
-                            QtdeAverbada = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.QtdeAverbada,
-                            Due = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.Due,
-                            ItemDue = consultaAverbacoesXml[i].Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemDue,
-                            Descricao = consultaAverbacoesXml[i].Eventos[j].Descricao,
+                            ChaveNfe = consultaAverbacoesXml.ChaveNfe,
+                            ArquivoXml = consultaAverbacoesXml.ArquivoXml,
+                            UnidadeTributavel = consultaAverbacoesXml.Produtos.Where(x => x.NItem == numeroItem).FirstOrDefault().UnidadeTributavel,
+                            QtdeTributavel = consultaAverbacoesXml.Produtos.Where(x => x.NItem == numeroItem).FirstOrDefault().QtdeTributavel,
+                            ItemNfe = consultaAverbacoesXml.Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemNfe,
+                            DataDoEmbarque = consultaAverbacoesXml.Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDoEmbarque,
+                            DataAverbacao = consultaAverbacoesXml.Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.DataDaAverbacao,
+                            QtdeAverbada = consultaAverbacoesXml.Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.QtdeAverbada,
+                            Due = consultaAverbacoesXml.Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.Due,
+                            ItemDue = consultaAverbacoesXml.Eventos[j].Evento.InfoEvento.DetalheEvento.ItensAverbados.ItemDue,
+                            Descricao = consultaAverbacoesXml.Eventos[j].Descricao,
                         });
 
                     }
                 }
                 else
                 {
-                    if (consultaAverbacoesXml[i].Produtos.Count() > 0)
+                    if (consultaAverbacoesXml.Produtos.Count() > 0)
                     {
-                        for (int p = 0; p < consultaAverbacoesXml[i].Produtos.Count(); p++)
+                        for (int p = 0; p < consultaAverbacoesXml.Produtos.Count(); p++)
                         {
                             consultaSerproView.Add(new ConsultaSerproView()
                             {
-                                ChaveNfe = consultaAverbacoesXml[i].ChaveNfe,
-                                ArquivoXml = consultaAverbacoesXml[i].ArquivoXml,
-                                UnidadeTributavel = consultaAverbacoesXml[i].Produtos?[p].UnidadeTributavel,
-                                QtdeTributavel = consultaAverbacoesXml[i].Produtos?[p].QtdeTributavel,
+                                ChaveNfe = consultaAverbacoesXml.ChaveNfe,
+                                ArquivoXml = consultaAverbacoesXml.ArquivoXml,
+                                UnidadeTributavel = consultaAverbacoesXml.Produtos?[p].UnidadeTributavel,
+                                QtdeTributavel = consultaAverbacoesXml.Produtos?[p].QtdeTributavel,
                                 Descricao = "Nota sem averbação"
                             });
                         }
@@ -172,24 +179,26 @@ namespace Sistema.DUE.Web
                     {
                         consultaSerproView.Add(new ConsultaSerproView()
                         {
-                            ChaveNfe = consultaAverbacoesXml[i].ChaveNfe,
-                            ArquivoXml = consultaAverbacoesXml[i].ArquivoXml,
+                            ChaveNfe = consultaAverbacoesXml.ChaveNfe,
+                            ArquivoXml = consultaAverbacoesXml.ArquivoXml,
                             Descricao = "Erro ao tentar montar a nota em tela"
                         });
                     }
                 }
+
+                //gravando dados na tabela
+                totalConsultasValidas += consultaSerproView.Count;
+
+                gravarNotaNaBase(consultaSerproView);
+                consultaSerproView.Clear();
+
             }
-            //gravando dados na tabela
-            gravarNotaNaBase(consultaSerproView);
-            
+            return totalConsultasValidas;
         }
 
         public void gravarNotaNaBase(List<ConsultaSerproView> consultaSerproView)
         {
-            for (int i = 0; i < consultaSerproView.Count(); i++)
-            {
-                _totalDeConsultasREalizadas.GravarConsultaNaBase(consultaSerproView[i]);
-            }
+            _totalDeConsultasREalizadas.GravarConsultaNaBase(consultaSerproView);
         }
 
         public List<ConsultaSerproView> BuscarConsultasNaBase(List<ConsultaSerproView> consultaSerproView)
@@ -252,12 +261,12 @@ namespace Sistema.DUE.Web
 
             return consultas;
         }
-        public List<ResultadoConsultaNFE> ConsultarAverbacoesXmlNota(List<string> dues)
+        public ResultadoConsultaNFE ConsultarAverbacoesXmlNota(string due)
         {
             //consultar API
             //pegar o token de acesso
             Envelope envelope = null;
-            List<ResultadoConsultaNFE> consultas = new List<ResultadoConsultaNFE>();
+            ResultadoConsultaNFE consultas = new ResultadoConsultaNFE();
             List<EventosNfe> eventos = new List<EventosNfe>();
             List<ItensAverbados> itens = new List<ItensAverbados>();
             //_consultaSerpro = new ConsultaSerpro();
@@ -272,48 +281,46 @@ namespace Sistema.DUE.Web
             string chavePesquisada = "";
             string arquivoXml = string.Empty;
 
-            for (int i = 0; i < dues.Count(); i++)
+
+            var result = _consultaSerpro.GetXml(token, due).Result;
+            if (result == null)
             {
-                var result = _consultaSerpro.GetXml(token, dues[i]).Result;
-                if (result == null)
-                {
-                    Session["SerproToken"] = _consultaSerpro.GenerateAccessToken().Result;
-                    token = (string)(Session["SerproToken"]);
-                    result = _consultaSerpro.GetXml(token, dues[i]).Result;
-                }
+                Session["SerproToken"] = _consultaSerpro.GenerateAccessToken().Result;
+                token = (string)(Session["SerproToken"]);
+                result = _consultaSerpro.GetXml(token, due).Result;
+            }
 
-                if (result != null)
+            if (result != null)
+            {
+                using (TextReader sr = new StringReader(result))
                 {
-                    using (TextReader sr = new StringReader(result))
+                    var serializer = new XmlSerializer(typeof(Envelope));
+                    try
                     {
-                        var serializer = new XmlSerializer(typeof(Envelope));
-                        try
-                        {
-                            //var teste = (Object)serializer.Deserialize(sr);
-                            envelope = (Envelope)serializer.Deserialize(sr);
-                        }
-                        catch (Exception ex)
+                        envelope = (Envelope)serializer.Deserialize(sr);
+                    }
+                    catch (Exception ex)
+                    {
+
+                        if (ex.InnerException.Message != null)
                         {
 
-                            if (ex.InnerException.Message != null)
-                            {
-
-                            }
                         }
                     }
                 }
-
-                chavePesquisada = dues[i];
-                arquivoXml = result;
-
-
-                //guardar o retorno na classe
-                if (result != null)
-                {
-                    consultas.Add(ResultadoDaCOnsultaXml(envelope, chavePesquisada, arquivoXml));
-                }
-
             }
+
+            chavePesquisada = due;
+            arquivoXml = result;
+
+
+            //guardar o retorno na classe
+            if (result != null)
+            {
+                consultas = ResultadoDaCOnsultaXml(envelope, chavePesquisada, arquivoXml);
+            }
+
+
 
             return consultas;
         }
@@ -412,7 +419,7 @@ namespace Sistema.DUE.Web
 
                     }
                 }
-                
+
             if (consulta != null)
             {
                 foreach (var item in consulta.Body.nfeConsultaNFeLogResult.retConsNFeLog.NFeLog.nfeProc.NFe.infNFe.det)
@@ -575,7 +582,7 @@ namespace Sistema.DUE.Web
 
 
         }
-        
+
         private void DeleteFilesXml()
         {
             string path = Server.MapPath("Uploads\\");
