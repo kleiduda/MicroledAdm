@@ -25,10 +25,7 @@ namespace Sistema.DUE.Web.DAO
             int totalconsultas = 0;
             using (SqlConnection con = new SqlConnection(Banco.StringConexao()))
             {
-                totalconsultas = con.Query<int>(@"SELECT SUM(Qtde)
-                                                  FROM TB_LOG_CONSULTA_NFe
-                                                  WHERE Data_consulta >= DATEADD(day, -21, GETDATE())
-                                                  AND Data_consulta <= GETDATE();").FirstOrDefault();
+                totalconsultas = con.Query<int>(@"SELECT * FROM [adm_due].[dbo].[Total_consulta_NFe]").FirstOrDefault();
             }
 
             return totalconsultas;

@@ -56,34 +56,94 @@ namespace Cargill.DUE.Web
             else
             {
                 //ValidateFile(file);
-                List<string> convertXmlText = ConvertXml(file);
+                List<string> convertXmlText = ConvertXmlFileAndSendNF(file);
                 if (convertXmlText != null)
                 {
                     List<RetornoXmlCCT> responseCct = new List<RetornoXmlCCT>();
-                    string _xmlRootAttribute = new XmlRootAttribute().ToString();
 
-                    for (int i = 0; i < convertXmlText.Count(); i++)
+                    try
                     {
-                        string xml = convertXmlText[i];
-                        if (xml.Contains("<error>")) { _xmlRootAttribute = "error"; } else { _xmlRootAttribute = "retornoServico"; }
-                        var serializer = new XmlSerializer(typeof(RetornoXmlCCT), new XmlRootAttribute(_xmlRootAttribute));
-                        
-                        string[] arrayTeste = { "20" };
-                        var sucesso = new RetornoXmlCCT("Recepção efetuada com sucesso", "200", "CCTR-2");
-                        var errorP = new RetornoXmlCCT("Esta operação já foi registrada anteriormente. Verifique a tag de identificação da Recepção.", "422", "CCTR-ER0029");
-                        using (TextReader reader = new StringReader(xml))
+                        for (int i = 0; i < convertXmlText.Count(); i++)
                         {
-                            
-                            responseCct.Add((RetornoXmlCCT)serializer.Deserialize(reader));
+                            string xml = convertXmlText[i];
+                            RetornoXmlCCT retornoXmlCCT = new RetornoXmlCCT();
+
+                            XmlDocument xmlDoc = new XmlDocument();
+                            xmlDoc.LoadXml(xml);
+
+                            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(xmlDoc.NameTable);
+                            namespaceManager.AddNamespace("ns", "http://www.pucomex.serpro.gov.br/cct");
+
+                            XmlNode retornoServicoNode = xmlDoc.SelectSingleNode("/ns:retornoServico", namespaceManager);
+                            if (retornoServicoNode != null)
+                            {
+                                // Aqui você pode acessar os elementos dentro de <retornoServico> conforme necessário
+                                // Por exemplo:
+                                XmlNodeList mensagensNodeList = retornoServicoNode.SelectNodes("ns:mensagens/ns:mensagem", namespaceManager);
+                                foreach (XmlNode mensagemNode in mensagensNodeList)
+                                {
+                                    // Processar as mensagens dentro de <mensagens>
+                                    string codigo = mensagemNode.SelectSingleNode("ns:codigo", namespaceManager)?.InnerText;
+                                    string descricao = mensagemNode.SelectSingleNode("ns:descricao", namespaceManager)?.InnerText;
+                                    // Faça o que for necessário com os valores obtidos
+                                    retornoXmlCCT.message = descricao;
+                                    retornoXmlCCT.code = codigo;
+                                    retornoXmlCCT.status = "ERRO";
+                                }
+
+                            }
+                            else
+                            {
+                                XmlNode errorNode = xmlDoc.SelectSingleNode("/error");
+                                XmlNode statusNode = errorNode.SelectSingleNode("status");
+                                if (statusNode != null && statusNode.InnerText == "200")
+                                {
+                                    retornoXmlCCT = new RetornoXmlCCT("Recepção efetuada com sucesso", "200", "CCTR-2");
+                                }
+
+                                if (statusNode != null && statusNode.InnerText == "422")
+                                {
+                                    XmlNode messageNode = errorNode.SelectSingleNode("message");
+                                    XmlNode codeNode = errorNode.SelectSingleNode("code");
+                                    if (messageNode.InnerText.Contains("Problemas encontrados:"))
+                                    {
+                                        XmlNode messageDetailErrorNode = errorNode.SelectSingleNode("detail").SelectSingleNode("error").SelectSingleNode("message");
+                                        XmlNode statusDetailErrorNode = errorNode.SelectSingleNode("detail").SelectSingleNode("error").SelectSingleNode("status");
+                                        XmlNode codeDetailErrorNode = errorNode.SelectSingleNode("detail").SelectSingleNode("error").SelectSingleNode("code");
+                                        retornoXmlCCT = new RetornoXmlCCT()
+                                        {
+                                            message = messageDetailErrorNode.InnerText,
+                                            status = statusDetailErrorNode.InnerText,
+                                            code = codeDetailErrorNode.InnerText
+                                        };
+                                    }
+                                    else
+                                    {
+                                        if (messageNode != null)
+                                        {
+                                            retornoXmlCCT = new RetornoXmlCCT()
+                                            {
+                                                message = messageNode.InnerText,
+                                                status = statusNode.InnerText,
+                                                code = codeNode.InnerText != null ? codeNode.InnerText : ""
+                                            };
+                                        }
+                                    }
+                                }
+                            }
+
+                            responseCct.Add(retornoXmlCCT);
+
                             List<IdentificadorNFE> _listIdent = GetIdenficadores(file);
                             responseCct[i].Identificador = _listIdent[i].Identificador;
-                            if (responseCct[i].message == "Problemas encontrados: ")
-                            {
-                                responseCct[i].message = "Esta operação já foi registrada anteriormente.Verifique a tag de identificação da Recepção.";
-                                responseCct[i].code = "CCTR-ER0029";
-                            }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        responseCct.Add(new RetornoXmlCCT() { message = "Erro generico: ENTRE EM CONTATO COM ADMINISTRADOR ---- " + ex.Message });
+                    }
+
+
                     GridView1.DataSource = responseCct;
                     GridView1.DataBind();
                 }
@@ -128,7 +188,7 @@ namespace Cargill.DUE.Web
             string[] source = File.ReadAllLines(nomeArquivo + file);
             //pego a primeira linha do array e monto em uma string
             var listaIdentificador = new List<IdentificadorNFE>();
-            for (int i = 1; i < source.Count(); i++)
+            for (int i = 0; i < source.Count(); i++)
             {
                 string xmlAtual = source[i];
                 string[] split = xmlAtual.Split(';');
@@ -137,98 +197,157 @@ namespace Cargill.DUE.Web
             }
             return listaIdentificador;
         }
-        private List<string> ConvertXml(string file)
+        private List<string> ConvertXmlFileAndSendNF(string file)
         {
-            List<string> xmlRetorno = new List<string>();
-            string url = "/cct/api/ext/carga/recepcao-nfe";
+            List<string> _xmls = new List<string>();
             string cpfCertificado = ConfigurationManager.AppSettings["CpfCertificado"].ToString();
-            string nomeArquivo = Server.MapPath("Uploads\\");
-            string[] source = File.ReadAllLines(nomeArquivo + file);
-            //pego a primeira linha do array e monto em uma string
-            for (int i = 1; i < source.Count(); i++)
+            // Dados do arquivo TXT
+            string txtFilePath = Server.MapPath("Uploads\\");
+            string[] txtLines = File.ReadAllLines(txtFilePath + file);
+
+            try
             {
-                if (source[i].Any())
+                for (int i = 0; i < txtLines.Count(); i++)
                 {
-                    string xmlAtual = source[i];
-                    string[] split = xmlAtual.Split(';');
-                    string cnpj = split[1];
-                    string cpfCondutor = split[6];
-                    string chaveAcesso = split[4];
-                    string cnpjTransportador = split[5];
-                    if (cnpj.Length < 14)
+                    #region DATA
+                    string[] txtData = txtLines[i].Split(';');
+
+                    // Definir o namespace e o local do arquivo XSD
+                    string targetNamespace = "http://www.pucomex.serpro.gov.br/cct";
+                    // Criar o documento XML
+                    XmlDocument doc = new XmlDocument();
+                    XmlElement root = doc.CreateElement("recepcoesNFE");
+                    root.SetAttribute("xmlns", targetNamespace);
+                    root.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+
+                    doc.AppendChild(root);
+
+                    // Adicionar o atributo 'xsi:schemaLocation' ao elemento raiz
+                    XmlAttribute schemaLocation = doc.CreateAttribute("xsi", "schemaLocation", "http://www.w3.org/2001/XMLSchema-instance");
+                    schemaLocation.Value = "http://www.pucomex.serpro.gov.br/cct RecepcaoNFE.xsd";
+                    root.SetAttributeNode(schemaLocation);
+
+                    // Adicionar o elemento 'recepcaoNFE'
+                    XmlElement recepcaoNFE = doc.CreateElement("recepcaoNFE");
+                    root.AppendChild(recepcaoNFE);
+
+                    // Adicionar os elementos dentro de 'recepcaoNFE' com os dados do arquivo TXT
+                    // Exemplo: Adicionar o elemento 'identificacaoRecepcao'
+                    XmlElement identificacaoRecepcao = doc.CreateElement("identificacaoRecepcao");
+                    identificacaoRecepcao.InnerText = txtData[0];
+                    recepcaoNFE.AppendChild(identificacaoRecepcao);
+
+                    XmlElement cnpjResp = doc.CreateElement("cnpjResp");
+                    cnpjResp.InnerText = txtData[1];
+                    recepcaoNFE.AppendChild(cnpjResp);
+
+                    XmlElement local = doc.CreateElement("local");
+                    recepcaoNFE.AppendChild(local);
+
+                    XmlElement codigoURF = doc.CreateElement("codigoURF");
+                    codigoURF.InnerText = txtData[2];
+                    local.AppendChild(codigoURF);
+
+                    XmlElement codigoRA = doc.CreateElement("codigoRA");
+                    codigoRA.InnerText = txtData[3];
+                    local.AppendChild(codigoRA);
+
+                    XmlElement notasFiscais = doc.CreateElement("notasFiscais");
+                    recepcaoNFE.AppendChild(notasFiscais);
+
+                    XmlElement notaFiscalEletronica = doc.CreateElement("notaFiscalEletronica");
+                    notasFiscais.AppendChild(notaFiscalEletronica);
+
+                    string chaveValue = txtData[4];
+                    if (chaveValue.Length < 44)
                     {
-                        cnpj = cnpj.PadLeft(14, '0');
+                        chaveValue = chaveValue.PadLeft(44, '0');
+                    }
+                    XmlElement chaveAcesso = doc.CreateElement("chaveAcesso");
+                    chaveAcesso.InnerText = chaveValue;
+                    notaFiscalEletronica.AppendChild(chaveAcesso);
+
+                    XmlElement transportador = doc.CreateElement("transportador");
+                    recepcaoNFE.AppendChild(transportador);
+
+                    if (!string.IsNullOrEmpty(txtData[5]))
+                    {
+                        string cnpjValue = txtData[5];
+                        if (cnpjValue.Length > 11)
+                        {
+                            XmlElement cnpj = doc.CreateElement("cnpj");
+                            cnpj.InnerText = cnpjValue;
+                            transportador.AppendChild(cnpj);
+                        }
+                        else
+                        {
+                            XmlElement cpf = doc.CreateElement("cpf");
+                            cpf.InnerText = cnpjValue;
+                            transportador.AppendChild(cpf);
+                        }
                     }
 
-                    if (cpfCondutor.Length < 11 && cpfCondutor.Length > 0)
+                    if (!string.IsNullOrEmpty(txtData[6]))
                     {
-                        cpfCondutor = cpfCondutor.PadLeft(11, '0');
+                        string cpfValue = txtData[6];
+                        if (cpfValue.Length < 11)
+                        {
+                            cpfValue = cpfValue.PadLeft(11, '0');
+                        }
+                        XmlElement cpfCondutor = doc.CreateElement("cpfCondutor");
+                        cpfCondutor.InnerText = cpfValue;
+                        transportador.AppendChild(cpfCondutor);
                     }
-                    if (chaveAcesso.Length < 44)
-                    {
-                        chaveAcesso = chaveAcesso.PadLeft(44, '0');
-                    }
-                    if (cnpjTransportador.Length < 14 && cnpjTransportador.Length > 11)
-                    {
-                        cnpjTransportador = cnpjTransportador.PadLeft(14, '0');
-                    }
-                    #region Montando o XML
-                    XDocument doc = new XDocument(
-                new XElement("ROOT",
-                 new XElement("recepcoesNFE",
-                            new XElement("recepcaoNFE",
-                            new XElement("identificacaoRecepcao", split[0]),
-                            new XElement("cnpjResp", cnpj),
-                                new XElement("local",
-                                new XElement("codigoURF", split[2]),
-                                new XElement("codigoRA", split[3])
-                                            ),
-                            new XElement("notasFiscais",
-                            new XElement("notaFiscalEletronica",
-                            new XElement("chaveAcesso", chaveAcesso)
-                                        )),
-                new XElement("transportador",
-                cnpjTransportador.ToString().Count() > 11 ? new XElement("cnpj", cnpjTransportador) : null,
-                cnpjTransportador.ToString().Count() < 14 ? new XElement("cpf", cnpjTransportador) : null,
-                //new XElement("cnpj", fields[5]),
-                split[6] == null ? new XElement("cpfCondutor", cpfCondutor) : null
-                //new XElement("cpfCondutor", fields[6])
-                ),
-                new XElement("pesoAferido", split[7]),
-                new XElement("observacoesGerais", split[8])
-                ))
-                ));
+
+                    XmlElement pesoAferido = doc.CreateElement("pesoAferido");
+                    pesoAferido.InnerText = txtData[7];
+                    recepcaoNFE.AppendChild(pesoAferido);
+
+                    XmlElement observacoesGerais = doc.CreateElement("observacoesGerais");
+                    observacoesGerais.InnerText = txtData[8];
+                    recepcaoNFE.AppendChild(observacoesGerais);
+
+                    string xmlString = doc.OuterXml;
+                    //Enviar nota 
+                    _xmls.Add(SendNfeCct(cpfCertificado, xmlString));
                     #endregion
-                    var xmlPost = doc.ToString();
-                    var xdoc = xmlPost.Replace("\r\n", "").Replace(" ", "");
-                    var xmlOk = xdoc.Replace("<ROOT>", "").Replace("</ROOT>", "").Replace("<recepcoesNFE>", "<recepcoesNFE xsi:schemaLocation=\"http://www.pucomex.serpro.gov.br/cct RecepcaoNFE.xsd\" xmlns=\"http://www.pucomex.serpro.gov.br/cct\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
-
-                    //validando o TOKEN
-                    Token token = null;
-
-                    if (HttpContext.Current.Session["TOKEN"] == null)
-                    {
-                        token = SisComexService.ObterToken(cpfCertificado);
-                    }
-                    else
-                    {
-                        token = (Token)HttpContext.Current.Session["TOKEN"];
-                    }
-                    var headers = SisComexService.ObterHeaders(token);
-                    var response = SisComexService.CriarRequestKleiton(url, headers, xmlOk, cpfCertificado);
-                    if (response == null)
-                        return null;
-
-                    xmlRetorno.Add(response.Content.ReadAsStringAsync().Result);
-
-
-                    //xmlRetorno.Add(new XElement("identificador", identificador).ToString());
-                    //XElement _identificador = new XElement("identificador", identificador);
-                    //xmlRetorno.Add(_identificador.ToString());
                 }
-
             }
-            return xmlRetorno;
+            catch (Exception ex)
+            {
+                _xmls.Add("Erro Generico: " + ex.Message);
+                return _xmls;
+            }
+
+
+            return _xmls;
+        }
+
+        private string SendNfeCct(string cpf, string xml)
+        {
+            string url = "/cct/api/ext/carga/recepcao-nfe";
+            //criar o HEADER da solicitacao
+            var headers = SisComexService.ObterHeaders(this.GenerateToken(cpf));
+            //
+            var response = SisComexService.CriarRequestNew(url, headers, xml);
+            //
+            return response.Content.ReadAsStringAsync().Result;
+
+        }
+
+        private Token GenerateToken(string cpfCertificado)
+        {
+            Token token = new Token();
+            if (HttpContext.Current.Session["TOKEN"] == null)
+            {
+                token = SisComexService.ObterToken(cpfCertificado);
+            }
+            else
+            {
+                token = (Token)HttpContext.Current.Session["TOKEN"];
+            }
+
+            return token;
         }
 
     }

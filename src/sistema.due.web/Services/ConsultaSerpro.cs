@@ -180,6 +180,9 @@ namespace Cargill.DUE.Web.Services
                 postData.Add(new KeyValuePair<string, string>("grant_type", "client_credentials"));
                 //postData.Add(new KeyValuePair<string, string>("scope", "public"));
 
+                // linha colocada devido a erro na resposta do token serpro depois de 12-02-2023
+                ServicePointManager.Expect100Continue = false;
+                
                 request.Content = new FormUrlEncodedContent(postData);
                 HttpResponseMessage tokenResponse = client.PostAsync(baseUrl, new FormUrlEncodedContent(postData)).Result;
 

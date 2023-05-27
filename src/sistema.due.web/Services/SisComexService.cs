@@ -208,6 +208,32 @@ namespace Sistema.DUE.Web.Services
             }
         
         }
+
+        public static HttpResponseMessage CriarRequestNew(string url, IDictionary<string, string> headers, string xml)
+        {
+            using (var handler = new WebRequestHandler())
+            {
+                handler.ClientCertificates.Add(ObterCertificado(ConfigurationManager.AppSettings["CpfCertificado"].ToString()));
+                ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
+
+                using (var client = new HttpClient(handler))
+                {
+
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+
+                    foreach (var header in headers)
+                        client.DefaultRequestHeaders.Add(header.Key, header.Value);
+
+                    xml = xml.Replace("\r\n", string.Empty);
+
+                    using (var stringContent = new StringContent(xml, Encoding.UTF8, "application/xml"))
+                    {
+                        return client.PostAsync(new Uri(UrlSiscomex + url), stringContent).Result;
+                    }
+                }
+            }
+        }
         public static string CriarRequestGet(string url, IDictionary<string, string> headers, string certificado)
         {
             using (var handler = new WebRequestHandler())

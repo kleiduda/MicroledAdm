@@ -187,7 +187,7 @@ namespace Sistema.DUE.Web
                 }
 
                 //gravando dados na tabela
-                totalConsultasValidas += consultaSerproView.Count;
+                totalConsultasValidas += 1;
 
                 gravarNotaNaBase(consultaSerproView);
                 consultaSerproView.Clear();

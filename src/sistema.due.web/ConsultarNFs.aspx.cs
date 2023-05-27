@@ -629,7 +629,7 @@ namespace Sistema.DUE.Web
             var _notaFiscalDAO = new NotaFiscalDAO();
 
             var notas = _notaFiscalDAO.ObterNFsImportadasPorGUID(guid);
-
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             ExcelPackage epackage = new ExcelPackage();
             ExcelWorksheet excel = epackage.Workbook.Worksheets.Add("CCT");
 
