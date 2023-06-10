@@ -75,6 +75,7 @@ namespace Cargill.DUE.Web
                             namespaceManager.AddNamespace("ns", "http://www.pucomex.serpro.gov.br/cct");
 
                             XmlNode retornoServicoNode = xmlDoc.SelectSingleNode("/ns:retornoServico", namespaceManager);
+                            XmlNode retornoServicoSucesso = xmlDoc.SelectSingleNode("retornoServico", namespaceManager);
                             if (retornoServicoNode != null)
                             {
                                 // Aqui você pode acessar os elementos dentro de <retornoServico> conforme necessário
@@ -92,14 +93,22 @@ namespace Cargill.DUE.Web
                                 }
 
                             }
+                            else if (retornoServicoSucesso != null)
+                            {
+                                XmlNode mensagemNode = retornoServicoSucesso.SelectSingleNode("operacao", namespaceManager)
+                                    .SelectSingleNode("mensagens", namespaceManager);
+                                string mensagemSucesso = mensagemNode.SelectSingleNode("mensagem", namespaceManager)
+                                    .SelectSingleNode("descricao", namespaceManager).InnerText;
+
+                                string codigoSucesso = mensagemNode.SelectSingleNode("mensagem", namespaceManager)
+                                    .SelectSingleNode("codigo", namespaceManager).InnerText;
+
+                                retornoXmlCCT = new RetornoXmlCCT(mensagemSucesso, "200", codigoSucesso);
+                            }
                             else
                             {
                                 XmlNode errorNode = xmlDoc.SelectSingleNode("/error");
                                 XmlNode statusNode = errorNode.SelectSingleNode("status");
-                                if (statusNode != null && statusNode.InnerText == "200")
-                                {
-                                    retornoXmlCCT = new RetornoXmlCCT("Recepção efetuada com sucesso", "200", "CCTR-2");
-                                }
 
                                 if (statusNode != null && statusNode.InnerText == "422")
                                 {
@@ -203,7 +212,9 @@ namespace Cargill.DUE.Web
             string cpfCertificado = ConfigurationManager.AppSettings["CpfCertificado"].ToString();
             // Dados do arquivo TXT
             string txtFilePath = Server.MapPath("Uploads\\");
-            string[] txtLines = File.ReadAllLines(txtFilePath + file);
+            string[] txtLines = File.ReadAllLines(txtFilePath + file)
+                                    .Where(line => !string.IsNullOrWhiteSpace(line))
+                                    .ToArray();
 
             try
             {
